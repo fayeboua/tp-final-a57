@@ -1,6 +1,6 @@
 # Architecture Simple - Pour les Débutants
 
-## 🏪 Notre Application est comme un Restaurant
+# Notre Application est comme un Restaurant
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -27,7 +27,7 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🔄 Comment ça marche ?
+# Comment ça marche ?
 
 1. **L'Utilisateur (Vous)**
    - Vous entrez dans le restaurant (ouvrez l'application)
@@ -53,25 +53,25 @@
    - Note les modifications (suivi des versions)
    - Aide le chef à s'améliorer (optimisation)
 
-## 📱 Les Ports (Les Portes du Restaurant)
+# Les Ports (Les Portes du Restaurant)
 
 - **Streamlit** : Port 8501 (Porte d'entrée)
 - **FastAPI** : Port 8000 (Porte de la cuisine)
 - **H2O** : Port 54321 (Porte du chef)
 
-## 💾 Les Données (Le Stock)
+# Les Données (Le Stock)
 
 - **mlruns_data** : Où sont stockées les recettes
 - **backend_data** : Où sont stockés les ingrédients
 - **frontend_data** : Où sont stockés les menus
 
-## 🔒 La Sécurité (Les Gardes)
+# La Sécurité (Les Gardes)
 
 - Chaque service a ses propres gardes
 - Les données sont protégées
 - Seuls les services autorisés peuvent communiquer
 
-## 🚨 En Cas de Problème
+# En Cas de Problème
 
 1. **Le Restaurant ne s'ouvre pas ?**
    - Vérifiez que Docker est allumé
@@ -85,7 +85,7 @@
    - Vérifiez que H2O est bien démarré
    - Vérifiez que les modèles sont chargés
 
-## 🎯 Pour Résumer
+# Pour Résumer
 
 - C'est comme un restaurant bien organisé
 - Chaque partie a son rôle
