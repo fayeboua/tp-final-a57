@@ -2,7 +2,7 @@
 
 
 - https://towardsdatascience.com/how-to-dockerize-machine-learning-applications-built-with-h2o-mlflow-fastapi-and-streamlit-a56221035eb5/
-- https://github.com/haythem-rehouma/demomlops3/edit/main/README.md
+- https://github.com/haythem-rehouma/demomlops3/blob/main/README.md
 - https://github.com/kennethleungty/End-to-End-AutoML-Insurance
 
 Links to articles on this project:
