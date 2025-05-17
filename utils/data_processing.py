@@ -15,9 +15,11 @@ def separate_id_col(h2o_frame):
         X_h2o = h2o_frame
     return id_name, X_id, X_h2o
 
+
 def match_col_types(h2o_frame):
     with open('data/processed/train_col_types.json') as f:
         train_col_types = json.load(f)
+
     for key in train_col_types.keys():
         try:
             if train_col_types[key] != h2o_frame.types[key]:
@@ -33,14 +35,22 @@ def match_col_types(h2o_frame):
             pass
     return h2o_frame
 
+
 def preprocess_for_model(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
+
+    # Encode Gender and Vehicle_Damage
     df["Gender"] = df["Gender"].map({"Male": 1, "Female": 0})
     df["Vehicle_Damage"] = df["Vehicle_Damage"].map({"Yes": 1, "No": 0})
+
+    # One-hot encode Vehicle_Age
     df["Vehicle_Age_lt_1Y"] = (df["Vehicle_Age"] == "< 1 Year").astype(int)
     df["Vehicle_Age_1_2Y"] = (df["Vehicle_Age"] == "1-2 Year").astype(int)
     df["Vehicle_Age_gt_2Y"] = (df["Vehicle_Age"] == "> 2 Years").astype(int)
     df.drop("Vehicle_Age", axis=1, inplace=True)
+
+    # One-hot encode categorical codes
     df = pd.get_dummies(df, columns=["Region_Code", "Policy_Sales_Channel"],
                         prefix=["Region_Code", "Policy_Sales_Channel"])
+
     return df
