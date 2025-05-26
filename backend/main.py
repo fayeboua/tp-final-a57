@@ -12,6 +12,8 @@ from mlflow.tracking import MlflowClient
 from mlflow.entities import ViewType
 
 from utils.data_processing import separate_id_col, preprocess_for_model
+from train import train as train_model
+from fastapi import Form
 
 app = FastAPI()
 
@@ -22,10 +24,15 @@ h2o.init()
 client = MlflowClient()
 all_exps = [exp.experiment_id for exp in client.list_experiments()]
 runs = mlflow.search_runs(experiment_ids=all_exps, run_view_type=ViewType.ALL)
-run_id = runs.loc[runs['metrics.log_loss'].idxmin()]['run_id']
-exp_id = runs.loc[runs['metrics.log_loss'].idxmin()]['experiment_id']
-print(f'[+] Loading best model: Run {run_id} of Experiment {exp_id}')
-best_model = mlflow.h2o.load_model(f"mlruns/{exp_id}/{run_id}/artifacts/model/")
+if not runs.empty and 'metrics.log_loss' in runs.columns:
+    best_idx = runs['metrics.log_loss'].idxmin()
+    run_id = runs.loc[best_idx]['run_id']
+    exp_id = runs.loc[best_idx]['experiment_id']
+    print(f'[+] Loading best model: Run {run_id} of Experiment {exp_id}')
+    best_model = mlflow.h2o.load_model(f"backend/mlruns/{exp_id}/{run_id}/artifacts/model/")
+else:
+    print("[!] Aucun modèle avec le metric 'log_loss' trouvé. Lancez d'abord l'entraînement.")
+    best_model = None
 
 @app.post("/predict")
 async def predict(file: bytes = File(...)):
@@ -68,3 +75,20 @@ async def home():
     <p>Envoyez un fichier CSV via <code>/predict</code></p>
     <p>Interface Swagger disponible sur <code>/docs</code></p>
     """)
+
+@app.post("/train")
+async def train(
+    experiment_name: str = Form(...),
+    target: str = Form(...),
+    models: int = Form(...)
+):
+    try:
+        print('[+] Training started')
+
+        # Lancer l'entraînement
+        train_model(experiment_name, target, models)
+
+        return JSONResponse(content={"message": "Training completed successfully."})
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
