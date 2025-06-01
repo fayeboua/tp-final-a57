@@ -1,50 +1,95 @@
-name: CI‑CD Docker
+# -------------------------------------------------------------------------------------------------------------------
+# Fichier : .github/workflows/ci-cd.yml
+# Objectif : Pipeline complet CI/CD
+#   1) build-and-push : construit les images backend + frontend, puis les pousse sur Docker Hub
+#   2) deploy         : déploie sur le serveur en lançant docker-compose pull && up -d
+#   3) notify         : envoie un email de notification à la fin du déploiement
+# -------------------------------------------------------------------------------------------------------------------
 
+name: CI-CD Docker
+
+# Déclenchement : à chaque push sur la branche main
 on:
   push:
     branches: [ main ]
 
 jobs:
   build-and-push:
+    # Ce job tourne sur votre runner self-hosted
     runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
 
+    steps:
+      # 1) Récupérer le code du dépôt
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      # 2) Debug : afficher le PATH et vérifier que Docker est installé
       - name: Debug – afficher le PATH
         run: |
           echo "PATH = $PATH"
           which docker || echo "docker non trouvé dans le PATH"
 
+      # 3) Connexion à Docker Hub (via secrets DH_USERNAME et DH_TOKEN)
       - name: Connexion à Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DH_USERNAME }}
           password: ${{ secrets.DH_TOKEN }}
 
+      # 4) Définir le tag de l’image (8 premiers caractères du SHA de commit)
       - name: Définir le tag d’image
         id: vars
-        run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+        run: |
+          echo "TAG=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
 
-      - name: Build & Push de l’image Docker
+      # 5) Build & Push de l’image Backend
+      - name: Build & Push image backend
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend             # Contexte : dossier backend/
+          file: ./backend/Dockerfile     # Dockerfile du backend
           push: true
-          tags: ${{ secrets.DH_USERNAME }}/tp-final-a57:${{ steps.vars.outputs.TAG }}
+          tags: ${{ secrets.DH_USERNAME }}/tp-final-a57-backend:${{ steps.vars.outputs.TAG }}
+
+      # 6) Build & Push de l’image Frontend
+      - name: Build & Push image frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend            # Contexte : dossier frontend/
+          file: ./frontend/Dockerfile    # Dockerfile du frontend
+          push: true
+          tags: ${{ secrets.DH_USERNAME }}/tp-final-a57-frontend:${{ steps.vars.outputs.TAG }}
 
   deploy:
+    # Ce job ne démarre qu'après build-and-push
     needs: build-and-push
+
+    # Se lance sur le même runner self-hosted pour exécuter docker-compose localement
     runs-on: self-hosted
+
     steps:
       - name: Déploiement local avec docker-compose
         run: |
+          # Chemin où se trouve votre dépôt cloné sur le serveur
           cd /home/eleve/tp-final-a57
-          docker compose pull
-          docker compose up -d
+
+          # Injecter les variables d’environnement requises par docker-compose.yml
+          export DH_USERNAME=${{ secrets.DH_USERNAME }}
+          export TAG=${{ steps.vars.outputs.TAG }}
+
+          # Télécharger les nouvelles images depuis Docker Hub
+          docker-compose pull
+
+          # Relancer les services en arrière-plan avec les dernières images
+          docker-compose up -d
 
   notify:
+    # Ce job ne démarre qu'après deploy
     needs: deploy
+
+    # On peut utiliser ubuntu-latest pour envoyer l’email
     runs-on: ubuntu-latest
+
     steps:
       - name: Send email notification
         uses: dawidd6/action-send-mail@v3
