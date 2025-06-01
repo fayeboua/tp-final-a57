@@ -45,11 +45,10 @@ jobs:
 
   deploy:
     needs: build-and-push
-    runs-on: self-hosted   # ou ubuntu-latest si vous utilisez SSH
+    runs-on: self-hosted
 
     steps:
-      # Si vous déployez sur le même runner :
-      - name: Checkout du code (pour utiliser github.workspace)
+      - name: Checkout du code
         uses: actions/checkout@v4
 
       - name: Déploiement local avec docker-compose
@@ -59,20 +58,6 @@ jobs:
           export TAG=${{ steps.vars.outputs.TAG }}
           docker-compose pull
           docker-compose up -d
-
-      # OU, si vous déployez sur un serveur distant, commentez les lignes précédentes et utilisez :
-      # - name: Déploiement sur le serveur via SSH
-      #   uses: appleboy/ssh-action@v0.1.7
-      #   with:
-      #     host: ${{ secrets.PROD_HOST }}
-      #     username: ${{ secrets.PROD_USER }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     script: |
-      #       cd /home/eleve/tp-final-a57
-      #       export DH_USERNAME=${{ secrets.DH_USERNAME }}
-      #       export TAG=${{ steps.vars.outputs.TAG }}
-      #       docker-compose pull
-      #       docker-compose up -d
 
   notify:
     needs: deploy
