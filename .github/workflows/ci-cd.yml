@@ -56,8 +56,8 @@ jobs:
           cd "${{ github.workspace }}"
           export DH_USERNAME=${{ secrets.DH_USERNAME }}
           export TAG=${{ steps.vars.outputs.TAG }}
-          docker-compose pull
-          docker-compose up -d
+          docker compose pull
+          docker compose up -d
 
   notify:
     needs: deploy
