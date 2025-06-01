@@ -3,7 +3,7 @@ import io
 import pandas as pd
 import h2o
 
-from fastapi import FastAPI, File, Form
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, HTMLResponse
 
