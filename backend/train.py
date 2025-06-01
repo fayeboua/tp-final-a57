@@ -2,6 +2,7 @@
 # H2O AutoML Training with MLflow Tracking
 # Author: Kenneth Leung
 # =========================================
+import os
 import argparse
 import h2o
 from h2o.automl import H2OAutoML, get_leaderboard
@@ -11,6 +12,81 @@ import mlflow.h2o
 from mlflow.tracking import MlflowClient
 
 import json
+
+def train(experiment_name, target, models, file_path):
+    # ========== Setup Tracking & Paths ==========
+    mlruns_path = "/app/backend/mlruns"
+    os.makedirs(mlruns_path, exist_ok=True)
+    mlflow.set_tracking_uri(f"file:{mlruns_path}")
+
+    # ========== Init H2O ==========
+    h2o.init()
+
+    # ========== Load Training Data ==========
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Training file not found: {file_path}")
+
+    main_frame = h2o.import_file(path=file_path)
+
+    # Save column types for prediction use
+    col_type_path = os.path.join(os.path.dirname(file_path), 'train_col_types.json')
+    with open(col_type_path, 'w') as fp:
+        json.dump(main_frame.types, fp)
+
+    predictors = [n for n in main_frame.col_names if n != target]
+    main_frame[target] = main_frame[target].asfactor()
+
+    # ========== MLflow Experiment Setup ==========
+    client = MlflowClient()
+    try:
+        experiment_id = mlflow.create_experiment(experiment_name)
+    except:
+        experiment = client.get_experiment_by_name(experiment_name)
+        experiment_id = experiment.experiment_id
+
+    mlflow.set_experiment(experiment_name)
+
+    # ========== AutoML + Tracking ==========
+    with mlflow.start_run() as run:
+        run_id = run.info.run_id
+
+        # Log input artifacts
+        mlflow.log_artifact(file_path, artifact_path="input_data")
+        mlflow.log_artifact(col_type_path, artifact_path="input_data")
+
+        # Train H2O model
+        aml = H2OAutoML(
+            max_models=models,
+            seed=42,
+            balance_classes=True,
+            sort_metric='logloss',
+            verbosity='info',
+            exclude_algos=['GLM', 'DRF']
+        )
+        aml.train(x=predictors, y=target, training_frame=main_frame)
+
+        # Log metrics
+        mlflow.log_metric("log_loss", aml.leader.logloss())
+        mlflow.log_metric("AUC", aml.leader.auc())
+
+        # Log model
+        mlflow.h2o.log_model(aml.leader, artifact_path="model")
+
+        # Save leaderboard
+        model_uri = mlflow.get_artifact_uri("model")
+        if model_uri.startswith("file:/"):
+            model_path = model_uri.replace("file:", "")
+            os.makedirs(model_path, exist_ok=True)
+            leaderboard_path = os.path.join(model_path, "leaderboard.csv")
+
+            lb = get_leaderboard(aml, extra_columns='ALL')
+            lb.as_data_frame().to_csv(leaderboard_path, index=False)
+
+            print(f"[✓] Model saved at: {model_uri}")
+            print(f"[✓] Leaderboard saved at: {leaderboard_path}")
+        else:
+            print(f"[!] Unexpected artifact URI: {model_uri}")
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="H2O AutoML Training and MLflow Tracking")
