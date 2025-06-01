@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   backend:
-    # L’image doit correspondre à celle poussée sur Docker Hub
+    build: backend
     image: "${DH_USERNAME}/tp-final-a57-backend:${TAG}"
     ports:
       - "8000:8000"
@@ -13,14 +13,17 @@ services:
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
       # On persiste uniquement le dossier mlruns (artefacts MLflow)
-      - ./backend/mlruns:/app/backend/mlruns
+      - ./backend:/app/backend
     networks:
       - project_network
 
   frontend:
+    build: frontend
     image: "${DH_USERNAME}/tp-final-a57-frontend:${TAG}"
     ports:
       - "8501:8501"
+    volumes:
+      - ./frontend:/app/frontend
     depends_on:
       - backend
     networks:
@@ -34,7 +37,7 @@ services:
       - MLFLOW_BACKEND_STORE_URI=file:/app/backend/mlruns
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
-      - ./backend/mlruns:/app/backend/mlruns
+      - ./backend:/app/backend
     working_dir: /app
     command: >
       sh -c "pip install --no-cache-dir mlflow &&
