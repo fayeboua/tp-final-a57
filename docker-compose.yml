@@ -1,8 +1,9 @@
+version: "3.8"
 
 services:
   backend:
-    build: backend
-    image: e2e-automl-backend:latest     
+    # L’image doit correspondre à celle poussée sur Docker Hub
+    image: "${DH_USERNAME}/tp-final-a57-backend:${TAG}"
     ports:
       - "8000:8000"
       - "54321:54321"
@@ -11,18 +12,16 @@ services:
       - MLFLOW_BACKEND_STORE_URI=/app/backend/mlruns
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
-      - ./backend:/app/backend
+      # On persiste uniquement le dossier mlruns (artefacts MLflow)
+      - ./backend/mlruns:/app/backend/mlruns
     networks:
       - project_network
 
   frontend:
-    build: frontend
-    image: e2e-automl-frontend:latest
+    image: "${DH_USERNAME}/tp-final-a57-frontend:${TAG}"
     ports:
       - "8501:8501"
-    volumes:
-      - ./frontend:/app/frontend
-    depends_on: 
+    depends_on:
       - backend
     networks:
       - project_network
@@ -35,16 +34,16 @@ services:
       - MLFLOW_BACKEND_STORE_URI=file:/app/backend/mlruns
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
-      - ./backend:/app/backend
+      - ./backend/mlruns:/app/backend/mlruns
     working_dir: /app
     command: >
       sh -c "pip install --no-cache-dir mlflow &&
              mlflow ui --backend-store-uri file:/app/backend/mlruns \
-             --default-artifact-root /app/backend/mlruns \
-             --host 0.0.0.0 --port 5000"
+                       --default-artifact-root /app/backend/mlruns \
+                       --host 0.0.0.0 --port 5000"
     networks:
       - project_network
-  
+
   portainer:
     image: portainer/portainer-ce:latest
     ports:
@@ -59,7 +58,6 @@ services:
 
 volumes:
   portainer_data:
-  
 
 networks:
   project_network:

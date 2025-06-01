@@ -101,7 +101,7 @@ async def train_api(
         with open(file_path, "wb") as f:
             f.write(contents)
 
-        train(experiment_name, target, models, file_path)
+        train_model(experiment_name, target, models, file_path)
 
         return JSONResponse(content={"message": "Training completed successfully."})
     except Exception as e:
