@@ -1,0 +1,78 @@
+# Run this Docker compose file using `docker compose up -d --build`
+# No need specify version 2 or 3 in latest Compose specification
+
+services:
+  # Backend service (FastAPI and H2O Model loaded from MLflow Tracking)
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    image: e2e-automl-backend:latest
+    container_name: automl-backend
+    ports:
+      - "8000:8000"
+      - "54321:54321"
+    volumes:
+      - backend_data:/app/backend/data
+      - mlruns_data:/app/backend/mlruns
+    environment:
+      - H2O_PORT=54321
+      - MLFLOW_TRACKING_URI=file:./mlruns
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    restart: unless-stopped
+    networks:
+      - project_network
+
+  # Frontend service (Streamlit UI)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: e2e-automl-frontend:latest
+    container_name: automl-frontend
+    ports:
+      - "8501:8501"
+    volumes:
+      - frontend_data:/app/frontend/data
+    environment:
+      - BACKEND_URL=http://backend:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - project_network
+
+networks:
+  project_network:
+    driver: bridge
+
+volumes:
+  backend_data:
+  frontend_data:
+  mlruns_data:

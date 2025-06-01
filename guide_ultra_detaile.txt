@@ -1,0 +1,1325 @@
+GUIDE ULTRA-DÉTAILLÉ POUR DÉBUTANTS COMPLETS
+===========================================
+
+Ce guide va vous accompagner pas à pas pour faire fonctionner l'application End-to-End AutoML Insurance.
+Chaque étape est expliquée en détail avec des captures d'écran et des explications simples.
+
+⚠️ AVANT DE COMMENCER ⚠️
+------------------------
+- Assurez-vous d'avoir au moins 4 Go d'espace disque libre
+  * C'est comme avoir assez d'espace dans votre armoire pour ranger vos affaires
+  * Pour vérifier l'espace libre :
+    1. Ouvrez l'Explorateur de fichiers (Windows + E)
+    2. Clic droit sur le disque C:
+    3. Sélectionnez "Propriétés"
+    4. Regardez "Espace libre"
+
+- Votre ordinateur doit être connecté à Internet
+  * C'est comme avoir une connexion téléphonique
+  * Pour vérifier :
+    1. Regardez l'icône WiFi en bas à droite
+    2. Elle doit être pleine (pas de croix rouge)
+    3. Essayez d'ouvrir un site web pour vérifier
+
+- Vous devez avoir les droits administrateur
+  * C'est comme avoir la clé principale de votre maison
+  * Pour vérifier :
+    1. Appuyez sur Windows + X
+    2. Cliquez sur "Windows PowerShell (Admin)"
+    3. Si une fenêtre bleue s'ouvre, vous avez les droits
+
+- Prévoyez environ 1 heure pour l'installation
+  * C'est comme le temps de préparer un bon repas
+  * Ne commencez pas si vous avez un cours dans 30 minutes
+  * Prévoyez du temps pour les problèmes éventuels
+
+QU'EST-CE QUE DOCKER ? (EXPLICATION TRÈS SIMPLE)
+----------------------------------------------
+Imaginez que Docker est comme une cuisine de restaurant :
+
+1. Le Chef (Docker) :
+   - C'est le programme qui gère tout
+   - Il sait comment préparer chaque plat (application)
+   - Il suit des recettes précises (Dockerfile)
+
+2. Les Conteneurs (Plats) :
+   - Ce sont comme des boîtes repas
+   - Chaque boîte contient :
+     * Le plat (votre application)
+     * Les couverts (outils nécessaires)
+     * Les condiments (bibliothèques)
+     * Tout ce qu'il faut pour manger (dépendances)
+
+3. Les Images (Recettes) :
+   - Ce sont comme des recettes de cuisine
+   - Elles disent exactement :
+     * Quels ingrédients utiliser
+     * Comment les préparer
+     * Dans quel ordre les assembler
+
+4. Le Docker Compose (Menu) :
+   - C'est comme un menu de restaurant
+   - Il dit :
+     * Quels plats servir ensemble
+     * Dans quel ordre les servir
+     * Comment les présenter
+
+POURQUOI UTILISER DOCKER ? (EXPLICATION PAR ANALOGIE)
+--------------------------------------------------
+1. Isolation (Comme des boîtes repas) :
+   - Chaque application est dans sa propre boîte
+   - Les plats ne se mélangent pas
+   - Chaque boîte a ses propres couverts
+
+2. Portabilité (Comme un repas à emporter) :
+   - Votre application fonctionne partout
+   - Comme un repas que vous pouvez manger :
+     * À la maison
+     * Au bureau
+     * En voyage
+
+3. Simplicité (Comme un repas tout prêt) :
+   - Pas besoin de cuisiner
+   - Tout est déjà préparé
+   - Il suffit de réchauffer
+
+4. Cohérence (Comme une chaîne de restaurants) :
+   - Le même goût partout
+   - Les mêmes ingrédients
+   - La même qualité
+
+COMPOSANTS DE L'APPLICATION (EXPLICATION DÉTAILLÉE)
+------------------------------------------------
+
+1. Backend (FastAPI) - Le Cuisinier :
+   - C'est le chef qui prépare les plats
+   - Il :
+     * Reçoit les commandes (requêtes)
+     * Prépare les plats (traitement)
+     * Envoie les plats (réponses)
+   - Il utilise :
+     * Des recettes (algorithmes)
+     * Des ingrédients (données)
+     * Des outils (bibliothèques)
+
+2. Frontend (Streamlit) - Le Serveur :
+   - C'est la personne qui :
+     * Accueille les clients
+     * Prend les commandes
+     * Sert les plats
+   - Il montre :
+     * Le menu (interface)
+     * Les plats (résultats)
+     * Les options (boutons)
+
+3. H2O AutoML - Le Chef Automatique :
+   - C'est comme un robot cuisinier qui :
+     * Apprend à cuisiner
+     * Essaie différentes recettes
+     * Choisit la meilleure
+   - Il peut :
+     * Cuisiner plusieurs plats
+     * Ajuster les recettes
+     * Améliorer le goût
+
+4. MLflow - Le Livre de Recettes :
+   - C'est comme un carnet qui :
+     * Note toutes les recettes
+     * Garde les meilleures
+     * Suit les modifications
+   - Il permet de :
+     * Retrouver les recettes
+     * Comparer les versions
+     * Refaire les plats
+
+EXPLICATION DÉTAILLÉE DE H2O (LE CHEF AUTOMATIQUE)
+-----------------------------------------------
+H2O est comme un chef cuisinier très intelligent qui apprend à cuisiner tout seul :
+
+1. Qu'est-ce que H2O exactement ?
+   - C'est un logiciel d'intelligence artificielle
+   - Il peut apprendre à partir d'exemples
+   - Il peut faire des prédictions
+   - C'est comme un étudiant qui apprend en regardant des exemples
+
+2. Comment H2O apprend-il ?
+   - Il regarde des exemples (données)
+   - Il essaie de comprendre les règles
+   - Il fait des tests
+   - Il s'améliore à chaque essai
+   - C'est comme apprendre à conduire :
+     * On regarde comment les autres conduisent
+     * On essaie de comprendre les règles
+     * On fait des erreurs
+     * On s'améliore
+
+3. Que fait H2O dans notre application ?
+   - Il analyse les données d'assurance
+   - Il apprend à prédire si quelqu'un va acheter une assurance
+   - Il utilise plusieurs méthodes différentes
+   - Il choisit la meilleure méthode
+   - C'est comme un médecin qui :
+     * Examine plusieurs patients
+     * Apprend à reconnaître les symptômes
+     * Fait des diagnostics
+     * Choisit le meilleur traitement
+
+4. Les différentes méthodes d'H2O :
+   a) Les arbres de décision :
+      - Comme un arbre à choix multiples
+      - Chaque branche est une question
+      - Chaque feuille est une réponse
+      - Exemple :
+        * Question 1 : Le client a-t-il plus de 30 ans ?
+        * Si oui → Question 2 : A-t-il déjà une assurance ?
+        * Si non → Question 3 : A-t-il un emploi stable ?
+
+   b) Les forêts aléatoires :
+      - Comme un groupe d'experts
+      - Chaque expert a son avis
+      - On prend la décision majoritaire
+      - Exemple :
+        * Expert 1 : "Ce client va acheter"
+        * Expert 2 : "Ce client ne va pas acheter"
+        * Expert 3 : "Ce client va acheter"
+        * Décision finale : Le client va probablement acheter
+
+   c) Le gradient boosting :
+      - Comme un étudiant qui apprend de ses erreurs
+      - Il fait des erreurs
+      - Il apprend de ces erreurs
+      - Il s'améliore à chaque fois
+      - Exemple :
+        * Premier essai : 70% de bonnes prédictions
+        * Deuxième essai : 80% de bonnes prédictions
+        * Troisième essai : 90% de bonnes prédictions
+
+5. Comment H2O choisit la meilleure méthode ?
+   - Il essaie toutes les méthodes
+   - Il compare les résultats
+   - Il choisit la plus précise
+   - C'est comme un concours de cuisine :
+     * Chaque chef prépare un plat
+     * Les juges goûtent tous les plats
+     * Le meilleur plat gagne
+
+EXPLICATION DÉTAILLÉE DE FASTAPI (LE CUISINIER)
+--------------------------------------------
+FastAPI est comme un cuisinier très rapide et efficace :
+
+1. Qu'est-ce que FastAPI ?
+   - C'est un framework web
+   - Il permet de créer des applications web
+   - Il est très rapide
+   - Il est facile à utiliser
+   - C'est comme un restaurant :
+     * Le menu (API)
+     * Les plats (fonctionnalités)
+     * Le service (réponses)
+
+2. Comment FastAPI fonctionne ?
+   - Il reçoit des demandes
+   - Il les traite
+   - Il renvoie des réponses
+   - C'est comme un serveur de restaurant :
+     * Il prend les commandes
+     * Il les transmet à la cuisine
+     * Il apporte les plats
+
+3. Les différentes parties de FastAPI :
+   a) Les routes (le menu) :
+      - Comme les pages d'un menu
+      - Chaque route est une fonctionnalité
+      - Exemple :
+        * /predict : pour faire des prédictions
+        * /health : pour vérifier si tout fonctionne
+        * /docs : pour voir la documentation
+
+   b) Les modèles (les recettes) :
+      - Comme des recettes de cuisine
+      - Ils définissent les données
+      - Exemple :
+        * CustomerData : données du client
+        * PredictionResult : résultat de la prédiction
+
+   c) Les dépendances (les ingrédients) :
+      - Comme les ingrédients d'une recette
+      - Ils sont nécessaires pour fonctionner
+      - Exemple :
+        * H2O : pour les prédictions
+        * MLflow : pour sauvegarder les modèles
+
+EXPLICATION DÉTAILLÉE DE STREAMLIT (LE SERVEUR)
+--------------------------------------------
+Streamlit est comme un serveur de restaurant très professionnel :
+
+1. Qu'est-ce que Streamlit ?
+   - C'est un framework pour créer des interfaces web
+   - Il est facile à utiliser
+   - Il est beau et moderne
+   - C'est comme un restaurant :
+     * La salle (interface)
+     * Les tables (pages)
+     * Le service (interactions)
+
+2. Comment Streamlit fonctionne ?
+   - Il crée une interface web
+   - Il permet aux utilisateurs d'interagir
+   - Il affiche les résultats
+   - C'est comme un serveur :
+     * Il accueille les clients
+     * Il prend leurs commandes
+     * Il leur apporte ce qu'ils veulent
+
+3. Les différentes parties de Streamlit :
+   a) Les widgets (les éléments d'interface) :
+      - Comme les meubles d'un restaurant
+      - Ils permettent d'interagir
+      - Exemple :
+        * st.file_uploader : pour télécharger des fichiers
+        * st.button : pour cliquer
+        * st.dataframe : pour afficher des tableaux
+
+   b) Les layouts (l'agencement) :
+      - Comme l'agencement d'un restaurant
+      - Ils organisent l'interface
+      - Exemple :
+        * st.sidebar : la barre latérale
+        * st.columns : les colonnes
+        * st.container : les conteneurs
+
+   c) Les graphiques (les présentations) :
+      - Comme la présentation des plats
+      - Ils montrent les données
+      - Exemple :
+        * st.line_chart : graphiques en ligne
+        * st.bar_chart : graphiques en barres
+        * st.map : cartes
+
+EXPLICATION DÉTAILLÉE DE MLFLOW (LE LIVRE DE RECETTES)
+---------------------------------------------------
+MLflow est comme un livre de recettes très bien organisé :
+
+1. Qu'est-ce que MLflow ?
+   - C'est un outil de gestion de modèles
+   - Il suit les expériences
+   - Il sauvegarde les modèles
+   - C'est comme un livre de recettes :
+     * Les recettes (modèles)
+     * Les notes (métriques)
+     * Les versions (itérations)
+
+2. Comment MLflow fonctionne ?
+   - Il enregistre les expériences
+   - Il sauvegarde les modèles
+   - Il suit les performances
+   - C'est comme un chef qui :
+     * Note ses recettes
+     * Garde les meilleures
+     * Améliore les autres
+
+3. Les différentes parties de MLflow :
+   a) Le tracking (le suivi) :
+      - Comme un journal de cuisine
+      - Il enregistre tout
+      - Exemple :
+        * Les paramètres utilisés
+        * Les résultats obtenus
+        * Les métriques calculées
+
+   b) Les modèles (les recettes) :
+      - Comme des recettes de cuisine
+      - Ils sont sauvegardés
+      - Exemple :
+        * Le modèle H2O
+        * Les paramètres
+        * Les performances
+
+   c) Le registry (le catalogue) :
+      - Comme un catalogue de recettes
+      - Il organise les modèles
+      - Exemple :
+        * Les versions
+        * Les étapes
+        * Les transitions
+
+COMMENT ÇA MARCHE ? (EXPLICATION PAS À PAS)
+-----------------------------------------
+
+1. Quand vous lancez l'application :
+   - Docker ouvre le restaurant
+   - Il prépare la cuisine (backend)
+   - Il met en place la salle (frontend)
+
+2. Quand vous utilisez l'application :
+   - Vous entrez dans le restaurant (ouvrez le navigateur)
+   - Vous commandez un plat (téléchargez un fichier)
+   - Le serveur prend votre commande (frontend)
+   - Le cuisinier prépare le plat (backend)
+   - Le serveur vous apporte le plat (résultats)
+
+3. Quand vous fermez l'application :
+   - Vous quittez le restaurant
+   - Le cuisinier range sa cuisine
+   - Le serveur nettoie la salle
+   - Tout est prêt pour la prochaine fois
+
+TABLE DES MATIÈRES
+------------------
+1. Installation de Docker Desktop (Windows)
+2. Installation de Docker (Linux)
+3. Vérification de l'installation
+4. Préparation du projet
+5. Lancement de l'application
+6. Utilisation de l'application
+7. Résolution des problèmes courants
+8. Nettoyage
+
+1. INSTALLATION DE DOCKER DESKTOP (WINDOWS)
+1. Installation de Docker Desktop
+2. Vérification de l'installation
+3. Préparation du projet
+4. Lancement de l'application
+5. Utilisation de l'application
+6. Résolution des problèmes courants
+7. Nettoyage
+
+1. INSTALLATION DE DOCKER DESKTOP
+--------------------------------
+
+Étape 1.1 : Téléchargement
+--------------------------
+1. Ouvrez votre navigateur web (Chrome, Firefox, etc.)
+   - Pour ouvrir Chrome : double-cliquez sur l'icône Chrome sur votre bureau
+   - Pour ouvrir Firefox : double-cliquez sur l'icône Firefox sur votre bureau
+
+2. Dans la barre d'adresse (en haut de la fenêtre), tapez exactement :
+   https://www.docker.com/products/docker-desktop
+   - La barre d'adresse est l'endroit où vous voyez l'URL du site web
+   - Assurez-vous de bien copier l'adresse
+
+3. Cliquez sur le bouton "Download for Windows"
+   - Le bouton est généralement bleu
+   - Il se trouve au milieu de la page
+   - Attendez que la page se charge complètement avant de cliquer
+
+4. Attendez que le téléchargement se termine
+   - Vous verrez une barre de progression en bas de votre navigateur
+   - Ne fermez pas le navigateur pendant le téléchargement
+   - Le fichier fait environ 500 Mo, donc cela peut prendre quelques minutes
+
+5. Notez où le fichier a été téléchargé
+   - Par défaut, il va dans le dossier "Téléchargements"
+   - Pour trouver ce dossier :
+     * Ouvrez l'Explorateur de fichiers (icône de dossier dans la barre des tâches)
+     * Dans le menu de gauche, cliquez sur "Téléchargements"
+   - Le fichier s'appelle "Docker Desktop Installer.exe"
+
+Étape 1.2 : Installation
+-----------------------
+1. Allez dans votre dossier "Téléchargements"
+   - Ouvrez l'Explorateur de fichiers
+   - Cliquez sur "Téléchargements" dans le menu de gauche
+   - Si vous ne voyez pas le menu, appuyez sur la touche Windows + E
+
+2. Cherchez le fichier "Docker Desktop Installer.exe"
+   - Il devrait être en haut de la liste si vous venez de le télécharger
+   - Si vous ne le voyez pas, utilisez la barre de recherche en haut à droite
+   - Tapez "Docker" dans la barre de recherche
+
+3. Double-cliquez sur ce fichier
+   - Si une fenêtre de sécurité apparaît, c'est normal
+   - Cette fenêtre vous demande si vous voulez autoriser l'installation
+
+4. Si une fenêtre de sécurité apparaît :
+   - Cliquez sur "Oui" ou "Autoriser"
+   - Cette fenêtre est une protection de Windows
+   - Elle apparaît car Docker Desktop modifie votre système
+
+5. Dans l'installateur Docker Desktop :
+   - Une nouvelle fenêtre s'ouvre
+   - Cochez la case "Accept the terms" (en bas de la fenêtre)
+   - Cliquez sur "Next" (le bouton bleu)
+   - Laissez toutes les options par défaut (ne changez rien)
+   - Cliquez sur "Next" à chaque étape
+   - À la dernière étape, cliquez sur "Finish"
+
+Étape 1.3 : Redémarrage
+----------------------
+1. Fermez toutes vos applications
+   - Cliquez sur la croix (X) de chaque fenêtre ouverte
+   - Sauvegardez votre travail si nécessaire
+   - Ne laissez aucune application ouverte
+
+2. Cliquez sur le menu Démarrer
+   - C'est l'icône Windows en bas à gauche de votre écran
+   - Si vous ne la voyez pas, appuyez sur la touche Windows de votre clavier
+
+3. Cliquez sur l'icône d'alimentation
+   - C'est une icône qui ressemble à un cercle avec une ligne
+   - Elle se trouve juste au-dessus du menu Démarrer
+
+4. Sélectionnez "Redémarrer"
+   - Ne choisissez pas "Éteindre" ou "Mettre en veille"
+   - Attendez que votre ordinateur s'éteigne et se rallume
+
+5. Attendez que votre ordinateur redémarre
+   - Vous verrez l'écran de démarrage de Windows
+   - Attendez que tout soit complètement chargé
+   - Ne touchez à rien pendant le redémarrage
+
+2. VÉRIFICATION DE L'INSTALLATION
+--------------------------------
+
+Étape 2.1 : Démarrage de Docker Desktop
+-------------------------------------
+1. Après le redémarrage, attendez que Windows soit complètement chargé
+   - Tous les icônes du bureau doivent être visibles
+   - La barre des tâches doit être complètement chargée
+   - Attendez au moins 1 minute après le redémarrage
+
+2. Cliquez sur le menu Démarrer
+   - C'est l'icône Windows en bas à gauche
+   - Si vous ne la voyez pas, appuyez sur la touche Windows
+
+3. Tapez "Docker Desktop"
+   - Commencez à taper dès que le menu Démarrer s'ouvre
+   - Vous verrez apparaître "Docker Desktop" dans les résultats
+
+4. Cliquez sur l'application Docker Desktop
+   - Elle devrait être la première dans les résultats
+   - L'icône est un petit poisson bleu
+
+5. Attendez que l'icône Docker apparaisse
+   - Elle apparaîtra dans la barre des tâches (en bas à droite)
+   - L'icône ressemble à un petit poisson bleu
+   - Elle peut mettre jusqu'à 2 minutes à apparaître
+
+6. L'icône doit devenir stable
+   - Au début, elle tourne ou s'anime
+   - Quand elle s'arrête de bouger, Docker est prêt
+   - Ne continuez pas tant que l'icône n'est pas stable
+
+Étape 2.2 : Vérification de Docker
+--------------------------------
+1. Appuyez sur la touche Windows + R
+   - La touche Windows a le logo Windows
+   - Appuyez sur Windows et R en même temps
+   - Une petite fenêtre "Exécuter" s'ouvre
+
+2. Tapez "powershell" et appuyez sur Entrée
+   - Tapez exactement "powershell" (tout en minuscules)
+   - Appuyez sur la touche Entrée
+   - Une fenêtre noire s'ouvre
+
+3. Dans la fenêtre PowerShell, tapez :
+   docker --version
+   - Tapez exactement comme montré
+   - Faites attention aux espaces
+   - Appuyez sur Entrée
+
+4. Vous devriez voir quelque chose comme "Docker version 20.10.x"
+   - Les chiffres peuvent être différents
+   - C'est normal, l'important est de voir "Docker version"
+   - Si vous voyez une erreur, continuez à l'étape 5
+
+5. Si vous voyez une erreur :
+   - Notez le message d'erreur exact
+   - Fermez PowerShell (cliquez sur la X)
+   - Redémarrez Docker Desktop
+   - Recommencez depuis l'étape 2.1
+
+3. PRÉPARATION DU PROJET
+------------------------
+
+Étape 3.1 : Création du dossier
+------------------------------
+1. Ouvrez l'Explorateur de fichiers
+   - Appuyez sur Windows + E
+   - Ou cliquez sur l'icône de dossier dans la barre des tâches
+
+2. Allez dans le dossier "Téléchargements"
+   - Cliquez sur "Téléchargements" dans le menu de gauche
+   - Si vous ne voyez pas le menu, appuyez sur Alt + V
+
+3. Créez un nouveau dossier nommé "projet"
+   - Clic droit dans une zone vide
+   - Sélectionnez "Nouveau" puis "Dossier"
+   - Tapez "projet" et appuyez sur Entrée
+
+4. À l'intérieur, créez un dossier "End-to-End-AutoML-Insurance"
+   - Double-cliquez sur le dossier "projet"
+   - Clic droit dans une zone vide
+   - Sélectionnez "Nouveau" puis "Dossier"
+   - Tapez "End-to-End-AutoML-Insurance" et appuyez sur Entrée
+
+Étape 3.2 : Vérification des fichiers
+----------------------------------
+1. Dans le dossier "End-to-End-AutoML-Insurance", vous devez avoir :
+   - Un dossier "backend"
+   - Un dossier "frontend"
+   - Un fichier "docker-compose.yml"
+   Pour vérifier :
+   - Double-cliquez sur le dossier "End-to-End-AutoML-Insurance"
+   - Vous devriez voir ces éléments listés
+
+2. Si ces fichiers ne sont pas présents :
+   - Ne continuez pas
+   - Contactez votre professeur
+   - Donnez-lui le chemin exact où vous êtes :
+     C:\Users\rehou\Downloads\projet\End-to-End-AutoML-Insurance
+
+4. LANCEMENT DE L'APPLICATION
+----------------------------
+
+Étape 4.1 : Ouverture de PowerShell
+--------------------------------
+1. Appuyez sur la touche Windows + R
+   - Maintenez la touche Windows enfoncée
+   - Appuyez sur R
+   - Relâchez les deux touches
+
+2. Tapez "powershell" et appuyez sur Entrée
+   - Tapez exactement "powershell"
+   - Appuyez sur Entrée
+   - Une fenêtre noire s'ouvre
+
+3. Une fenêtre noire s'ouvre
+   - C'est normal
+   - C'est l'interface en ligne de commande
+   - Ne fermez pas cette fenêtre
+
+Étape 4.2 : Navigation vers le dossier
+-----------------------------------
+1. Dans PowerShell, tapez exactement :
+   cd C:\Users\rehou\Downloads\projet\End-to-End-AutoML-Insurance
+   - Faites attention aux espaces
+   - Copiez-collez si possible
+   - Appuyez sur Entrée
+
+2. Vérifiez que vous êtes dans le bon dossier
+   - Tapez : dir
+   - Appuyez sur Entrée
+   - Vous devriez voir les dossiers "backend" et "frontend"
+
+3. Si vous ne voyez pas ces dossiers :
+   - Vérifiez le chemin
+   - Recommencez l'étape 4.2
+   - Si le problème persiste, contactez votre professeur
+
+Étape 4.3 : Lancement de l'application
+-----------------------------------
+1. Assurez-vous que Docker Desktop est en cours d'exécution
+   - Vérifiez l'icône dans la barre des tâches
+   - Elle doit être stable (pas d'animation)
+   - Si elle n'est pas là, relancez Docker Desktop
+
+2. Dans PowerShell, tapez exactement :
+   docker compose up -d --build
+   - Faites attention aux espaces
+   - Copiez-collez si possible
+   - Appuyez sur Entrée
+
+3. Attendez que le processus se termine
+   - Cela peut prendre 5 à 10 minutes
+   - Vous verrez beaucoup de texte défiler
+   - C'est normal, ne fermez pas la fenêtre
+
+4. Quand c'est terminé :
+   - Le texte s'arrête de défiler
+   - Vous revoyez la ligne de commande
+   - Il n'y a pas de message d'erreur en rouge
+
+5. Si vous voyez des erreurs :
+   - Notez le message d'erreur exact
+   - Ne fermez pas PowerShell
+   - Contactez votre professeur
+
+5. UTILISATION DE L'APPLICATION
+------------------------------
+
+Étape 5.1 : Accès à l'interface
+-----------------------------
+1. Ouvrez votre navigateur web
+   - Chrome ou Firefox
+   - N'importe lequel des deux fonctionne
+
+2. Dans la barre d'adresse, tapez exactement :
+   http://localhost:8501
+   - Faites attention à l'orthographe
+   - Il n'y a pas d'espaces
+   - Appuyez sur Entrée
+
+3. Vous devriez voir l'interface de l'application
+   - Un titre "End-to-End AutoML Project: Insurance Cross-Sell"
+   - Un bouton pour télécharger des fichiers
+   - Si vous ne voyez pas cela, continuez à l'étape suivante
+
+4. Si la page ne se charge pas :
+   - Attendez 30 secondes
+   - Rafraîchissez la page (F5)
+   - Si ça ne marche toujours pas, voir la section "Problèmes courants"
+
+Étape 5.2 : Téléchargement des données
+-----------------------------------
+1. Dans l'interface, cliquez sur "Browse files"
+   - C'est un bouton qui permet de choisir un fichier
+   - Il peut aussi s'appeler "Parcourir les fichiers"
+
+2. Naviguez vers le dossier "backend/data"
+   - Cliquez sur "backend"
+   - Puis cliquez sur "data"
+   - Vous devriez voir des fichiers CSV
+
+3. Sélectionnez un fichier CSV
+   - Cliquez sur un fichier qui se termine par .csv
+   - Si vous ne voyez pas de fichiers, contactez votre professeur
+
+4. Cliquez sur "Ouvrir"
+   - Le fichier devrait apparaître dans l'interface
+   - Vous devriez voir un aperçu des données
+
+Étape 5.3 : Obtention des prédictions
+----------------------------------
+1. Cliquez sur le bouton "Start Prediction"
+   - Attendez que le traitement soit terminé
+   - Une barre de progression peut apparaître
+   - Ne fermez pas le navigateur
+
+2. Quand c'est terminé :
+   - Un message de succès apparaît
+   - Un bouton "Download" apparaît
+   - Cliquez sur ce bouton
+
+3. Sauvegardez le fichier
+   - Choisissez un endroit facile à trouver
+   - Le fichier sera au format JSON
+   - Notez où vous l'avez sauvegardé
+
+6. RÉSOLUTION DES PROBLÈMES COURANTS
+-----------------------------------
+
+Problème 1 : Docker Desktop ne démarre pas
+----------------------------------------
+Solution :
+1. Redémarrez votre ordinateur
+   - Sauvegardez votre travail
+   - Fermez toutes les applications
+   - Redémarrez Windows
+
+2. Vérifiez que l'icône Docker est dans la barre des tâches
+   - Regardez en bas à droite
+   - L'icône doit être stable
+   - Si elle n'est pas là, relancez Docker Desktop
+
+3. Si le problème persiste :
+   - Désinstallez Docker Desktop
+   - Redémarrez l'ordinateur
+   - Réinstallez Docker Desktop
+   - Suivez à nouveau le guide depuis le début
+
+Problème 2 : Erreur lors du lancement
+-----------------------------------
+Solution :
+1. Vérifiez que vous êtes dans le bon dossier
+   - Tapez : dir
+   - Vous devriez voir "backend" et "frontend"
+   - Si non, retournez à l'étape 4.2
+
+2. Tapez exactement :
+   docker compose down
+   - Attendez que ça se termine
+   - Vous devriez revoir la ligne de commande
+
+3. Puis tapez exactement :
+   docker compose up -d --build
+   - Attendez que ça se termine
+   - Vérifiez qu'il n'y a pas d'erreurs en rouge
+
+Problème 3 : L'interface ne s'affiche pas
+---------------------------------------
+Solution :
+1. Vérifiez l'adresse
+   - Elle doit être exactement : http://localhost:8501
+   - Pas d'espaces
+   - Pas de fautes de frappe
+
+2. Essayez un autre navigateur
+   - Si vous utilisez Chrome, essayez Firefox
+   - Si vous utilisez Firefox, essayez Chrome
+   - Fermez complètement le navigateur avant de réessayer
+
+3. Vérifiez Docker Desktop
+   - L'icône doit être stable
+   - Si elle n'est pas là, relancez Docker Desktop
+   - Attendez que l'icône soit stable
+
+7. NETTOYAGE
+------------
+
+Étape 7.1 : Arrêt de l'application
+--------------------------------
+1. Dans PowerShell, tapez exactement :
+   docker compose down
+   - Faites attention aux espaces
+   - Appuyez sur Entrée
+   - Attendez que ça se termine
+
+2. Vérifiez que c'est terminé
+   - Vous devriez revoir la ligne de commande
+   - Il ne devrait pas y avoir d'erreurs
+   - Vous pouvez fermer PowerShell
+
+Étape 7.2 : Nettoyage des images
+------------------------------
+1. Dans PowerShell, tapez exactement :
+   docker system prune -a
+   - Faites attention aux espaces
+   - Appuyez sur Entrée
+   - Une confirmation vous sera demandée
+
+2. Tapez "y" et appuyez sur Entrée
+   - C'est pour confirmer le nettoyage
+   - Attendez que ça se termine
+   - Vous pouvez fermer PowerShell
+
+Étape 7.3 : Fermeture de Docker Desktop
+------------------------------------
+1. Cliquez sur l'icône Docker dans la barre des tâches
+   - C'est l'icône en bas à droite
+   - Un menu devrait apparaître
+
+2. Cliquez sur "Quit Docker Desktop"
+   - L'icône devrait disparaître
+   - C'est normal
+   - Vous pouvez maintenant éteindre votre ordinateur
+
+NOTES IMPORTANTES
+----------------
+- Gardez Docker Desktop en cours d'exécution pendant que vous utilisez l'application
+- La première utilisation peut prendre plus de temps (jusqu'à 10 minutes)
+- Si vous avez des erreurs, notez-les et demandez de l'aide
+- N'oubliez pas de fermer l'application quand vous avez terminé
+- Sauvegardez vos fichiers de prédiction à un endroit sûr
+- Ne fermez pas PowerShell pendant que l'application tourne
+- Si vous devez quitter, suivez d'abord les étapes de nettoyage
+
+CONTACT
+-------
+Si vous rencontrez des problèmes, contactez votre professeur avec :
+1. Le message d'erreur exact (copiez-collez le texte)
+2. Les étapes que vous avez suivies (numéros des étapes)
+3. Une capture d'écran si possible (touche Windows + Shift + S)
+4. Le chemin exact où vous êtes (C:\Users\...)
+5. La version de Docker (docker --version)
+
+2. INSTALLATION DE DOCKER (LINUX)
+--------------------------------
+
+Étape 2.1 : Préparation du système
+--------------------------------
+1. Ouvrez le Terminal
+   - Appuyez sur Ctrl + Alt + T
+   - Ou cherchez "Terminal" dans le menu des applications
+   - Une fenêtre noire s'ouvre
+
+2. Mettez à jour votre système
+   - Tapez exactement :
+     sudo apt update
+   - Appuyez sur Entrée
+   - Entrez votre mot de passe si demandé
+   - Attendez que ça se termine
+
+3. Installez les prérequis
+   - Tapez exactement :
+     sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+   - Appuyez sur Entrée
+   - Attendez que l'installation se termine
+
+Étape 2.2 : Installation de Docker
+--------------------------------
+1. Ajoutez la clé GPG de Docker
+   - Tapez exactement :
+     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+   - Appuyez sur Entrée
+   - Attendez que ça se termine
+
+2. Ajoutez le dépôt Docker
+   - Tapez exactement :
+     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+   - Appuyez sur Entrée
+   - Appuyez sur Entrée à nouveau si demandé
+
+3. Mettez à jour la liste des paquets
+   - Tapez exactement :
+     sudo apt update
+   - Appuyez sur Entrée
+   - Attendez que ça se termine
+
+4. Installez Docker
+   - Tapez exactement :
+     sudo apt install -y docker-ce docker-ce-cli containerd.io
+   - Appuyez sur Entrée
+   - Attendez que l'installation se termine (peut prendre plusieurs minutes)
+
+Étape 2.3 : Configuration de Docker
+---------------------------------
+1. Ajoutez votre utilisateur au groupe docker
+   - Tapez exactement :
+     sudo usermod -aG docker $USER
+   - Appuyez sur Entrée
+
+2. Redémarrez votre session
+   - Fermez le Terminal
+   - Déconnectez-vous de votre session
+   - Reconnectez-vous
+
+3. Vérifiez l'installation
+   - Ouvrez un nouveau Terminal
+   - Tapez exactement :
+     docker --version
+   - Vous devriez voir la version de Docker
+
+Étape 2.4 : Installation de Docker Compose
+----------------------------------------
+1. Téléchargez Docker Compose
+   - Tapez exactement :
+     sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   - Appuyez sur Entrée
+   - Attendez que le téléchargement se termine
+
+2. Rendez le fichier exécutable
+   - Tapez exactement :
+     sudo chmod +x /usr/local/bin/docker-compose
+   - Appuyez sur Entrée
+
+3. Vérifiez l'installation
+   - Tapez exactement :
+     docker-compose --version
+   - Vous devriez voir la version de Docker Compose
+
+NOTES SPÉCIFIQUES POUR LINUX
+---------------------------
+1. Commandes importantes :
+   - Pour démarrer Docker : sudo systemctl start docker
+   - Pour arrêter Docker : sudo systemctl stop docker
+   - Pour vérifier le statut : sudo systemctl status docker
+
+2. Permissions :
+   - Si vous avez des erreurs de permission, utilisez sudo
+   - Exemple : sudo docker compose up -d --build
+
+3. Chemins de fichiers :
+   - Sur Linux, utilisez des barres obliques : /home/votre_nom/projet/
+   - Les chemins sont sensibles à la casse
+
+4. Interface graphique :
+   - L'interface web reste accessible sur http://localhost:8501
+   - Utilisez Firefox ou Chrome pour y accéder
+
+5. Problèmes courants sur Linux :
+   - Si Docker ne démarre pas : sudo systemctl restart docker
+   - Si vous avez des erreurs de permission : sudo chmod 666 /var/run/docker.sock
+   - Si le port est déjà utilisé : sudo lsof -i :8501
+
+EXPLICATIONS DÉTAILLÉES DES COMMANDES
+-----------------------------------
+
+1. Commandes Docker de base :
+   - docker --version : Affiche la version de Docker
+   - docker ps : Liste les conteneurs en cours d'exécution
+   - docker images : Liste les images Docker disponibles
+   - docker compose up : Démarre les conteneurs
+   - docker compose down : Arrête les conteneurs
+
+2. Commandes système :
+   - sudo : Exécute une commande avec les droits administrateur
+   - systemctl : Gère les services système
+   - apt : Gère les paquets sur Linux
+   - chmod : Change les permissions des fichiers
+
+STRUCTURE DES DOSSIERS
+---------------------
+1. Dossier principal :
+   /End-to-End-AutoML-Insurance/
+   ├── backend/
+   │   ├── data/
+   │   ├── mlruns/
+   │   ├── utils/
+   │   ├── main.py
+   │   ├── train.py
+   │   └── requirements-backend.txt
+   ├── frontend/
+   │   ├── app.py
+   │   └── requirements-frontend.txt
+   └── docker-compose.yml
+
+2. Rôle de chaque dossier :
+   - backend/ : Contient le code de l'API et le modèle
+   - frontend/ : Contient l'interface utilisateur
+   - data/ : Stocke les fichiers de données
+   - mlruns/ : Stocke les modèles entraînés
+
+EXPLICATION DES FICHIERS DE CONFIGURATION
+---------------------------------------
+
+1. docker-compose.yml :
+   ```yaml
+   services:
+     backend:
+       build: backend
+       ports:
+         - "8000:8000"
+       volumes:
+         - ./backend:/app/backend
+   
+     frontend:
+       build: frontend
+       ports:
+         - "8501:8501"
+       volumes:
+         - ./frontend:/app/frontend
+   ```
+   - build : Indique où trouver le Dockerfile
+   - ports : Mappe les ports du conteneur à l'ordinateur
+   - volumes : Partage des fichiers entre l'ordinateur et le conteneur
+
+2. requirements-backend.txt :
+   - Liste les bibliothèques Python nécessaires
+   - Inclut FastAPI, H2O, MLflow
+   - Spécifie les versions exactes
+
+3. requirements-frontend.txt :
+   - Liste les bibliothèques pour l'interface
+   - Inclut Streamlit et ses dépendances
+   - Spécifie les versions exactes
+
+DÉTAILS TECHNIQUES
+-----------------
+
+1. Ports utilisés :
+   - 8000 : API FastAPI
+   - 8501 : Interface Streamlit
+   - 54321 : Serveur H2O
+
+2. Volumes Docker :
+   - Permettent de partager des fichiers
+   - Gardent les données persistantes
+   - Facilitent le développement
+
+3. Réseaux Docker :
+   - Permettent aux conteneurs de communiquer
+   - Isolent l'application
+   - Sécurisent les communications
+
+BONNES PRATIQUES
+---------------
+
+1. Gestion des fichiers :
+   - Sauvegardez régulièrement vos données
+   - Gardez une copie des fichiers importants
+   - Organisez vos dossiers proprement
+
+2. Sécurité :
+   - Ne partagez pas vos mots de passe
+   - Utilisez des chemins sécurisés
+   - Vérifiez les permissions
+
+3. Maintenance :
+   - Nettoyez régulièrement les images Docker
+   - Mettez à jour les dépendances
+   - Vérifiez les logs
+
+DÉPANNAGE AVANCÉ
+---------------
+
+1. Problèmes de mémoire :
+   - Augmentez la mémoire allouée à Docker
+   - Fermez les applications inutiles
+   - Vérifiez l'utilisation de la mémoire
+
+2. Problèmes de réseau :
+   - Vérifiez les pare-feu
+   - Testez la connexion Internet
+   - Vérifiez les ports utilisés
+
+3. Problèmes de performance :
+   - Optimisez les ressources Docker
+   - Vérifiez les logs
+   - Surveillez l'utilisation CPU
+
+RESSOURCES UTILES
+----------------
+
+1. Documentation officielle :
+   - Docker : https://docs.docker.com
+   - FastAPI : https://fastapi.tiangolo.com
+   - Streamlit : https://docs.streamlit.io
+   - H2O : https://docs.h2o.ai
+
+2. Forums et communautés :
+   - Stack Overflow
+   - GitHub Issues
+   - Forums Docker
+
+3. Outils de développement :
+   - Visual Studio Code
+   - PyCharm
+   - Docker Desktop
+
+DÉPLOIEMENT SUR LINUX AZURE (GUIDE COMPLET)
+-----------------------------------------
+
+1. CRÉATION DU COMPTE AZURE
+--------------------------
+1. Ouvrez votre navigateur et allez sur https://portal.azure.com
+2. Cliquez sur "Créer une ressource"
+3. Dans la barre de recherche, tapez "Ubuntu Server"
+4. Sélectionnez "Ubuntu Server 20.04 LTS"
+5. Cliquez sur "Créer"
+
+2. CONFIGURATION DE LA MACHINE VIRTUELLE
+-------------------------------------
+1. Dans "Détails du projet" :
+   - Abonnement : Choisissez votre abonnement
+   - Groupe de ressources : Créez-en un nouveau
+   - Nom de la machine virtuelle : "automl-insurance"
+   - Région : Choisissez la plus proche de vous
+   - Options de disponibilité : "Aucune redondance d'infrastructure requise"
+   - Image : "Ubuntu Server 20.04 LTS"
+   - Taille : "Standard_B2s" (2 vcpus, 4 GiB mémoire)
+
+2. Dans "Compte administrateur" :
+   - Type d'authentification : "Mot de passe"
+   - Nom d'utilisateur : "azureuser"
+   - Mot de passe : Créez un mot de passe fort
+   - Confirmez le mot de passe
+
+3. Dans "Règles des ports d'entrée" :
+   - Ports d'entrée publics : "Autoriser les ports sélectionnés"
+   - Sélectionner les ports d'entrée : "SSH (22), HTTP (80), HTTPS (443)"
+
+4. Cliquez sur "Vérifier + créer"
+5. Cliquez sur "Créer"
+6. Attendez que le déploiement soit terminé (environ 5 minutes)
+
+3. CONNEXION À LA MACHINE VIRTUELLE
+--------------------------------
+1. Une fois le déploiement terminé, cliquez sur "Accéder à la ressource"
+2. Copiez l'adresse IP publique
+3. Ouvrez un terminal sur votre ordinateur
+4. Tapez la commande :
+   ```bash
+   ssh azureuser@<adresse-ip-publique>
+   ```
+5. Tapez "yes" quand on vous demande de confirmer
+6. Entrez le mot de passe que vous avez créé
+
+4. INSTALLATION DES PRÉREQUIS
+---------------------------
+1. Mettez à jour le système :
+   ```bash
+   sudo apt update
+   sudo apt upgrade -y
+   ```
+
+2. Installez les outils nécessaires :
+   ```bash
+   sudo apt install -y \
+       apt-transport-https \
+       ca-certificates \
+       curl \
+       software-properties-common \
+       git \
+       python3-pip \
+       python3-venv
+   ```
+
+3. Installez Docker :
+   ```bash
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+   sudo apt update
+   sudo apt install -y docker-ce docker-ce-cli containerd.io
+   ```
+
+4. Installez Docker Compose :
+   ```bash
+   sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   sudo chmod +x /usr/local/bin/docker-compose
+   ```
+
+5. Ajoutez votre utilisateur au groupe docker :
+   ```bash
+   sudo usermod -aG docker $USER
+   newgrp docker
+   ```
+
+5. DÉPLOIEMENT DE L'APPLICATION
+----------------------------
+1. Créez un dossier pour le projet :
+   ```bash
+   mkdir -p ~/projet
+   cd ~/projet
+   ```
+
+2. Clonez le projet (remplacez l'URL par celle de votre dépôt) :
+   ```bash
+   git clone https://github.com/votre-username/End-to-End-AutoML-Insurance.git
+   cd End-to-End-AutoML-Insurance
+   ```
+
+3. Lancez l'application :
+   ```bash
+   docker compose up -d --build
+   ```
+
+4. Vérifiez que les conteneurs sont en cours d'exécution :
+   ```bash
+   docker ps
+   ```
+
+6. CONFIGURATION DU FIREWALL
+--------------------------
+1. Ouvrez les ports nécessaires :
+   ```bash
+   sudo ufw allow 22/tcp
+   sudo ufw allow 80/tcp
+   sudo ufw allow 443/tcp
+   sudo ufw allow 8501/tcp
+   sudo ufw allow 8000/tcp
+   sudo ufw allow 54321/tcp
+   ```
+
+2. Activez le pare-feu :
+   ```bash
+   sudo ufw enable
+   ```
+
+7. ACCÈS À L'APPLICATION
+----------------------
+1. Dans le portail Azure :
+   - Allez dans votre machine virtuelle
+   - Cliquez sur "Mise en réseau"
+   - Ajoutez une règle de port d'entrée :
+     * Nom : "streamlit"
+     * Plage de ports : "8501"
+     * Protocole : "TCP"
+     * Action : "Autoriser"
+     * Priorité : "1000"
+
+2. Accédez à l'application :
+   - Ouvrez votre navigateur
+   - Tapez : http://<adresse-ip-publique>:8501
+
+8. SURVEILLANCE ET MAINTENANCE
+----------------------------
+1. Vérifiez les logs :
+   ```bash
+   docker compose logs -f
+   ```
+
+2. Redémarrez l'application si nécessaire :
+   ```bash
+   docker compose down
+   docker compose up -d --build
+   ```
+
+3. Mettez à jour l'application :
+   ```bash
+   git pull
+   docker compose down
+   docker compose up -d --build
+   ```
+
+9. SAUVEGARDE ET SÉCURITÉ
+------------------------
+1. Sauvegardez les données :
+   ```bash
+   # Créez un script de sauvegarde
+   cat > backup.sh << 'EOF'
+   #!/bin/bash
+   BACKUP_DIR="/home/azureuser/backups"
+   mkdir -p $BACKUP_DIR
+   tar -czf $BACKUP_DIR/backup-$(date +%Y%m%d).tar.gz /home/azureuser/projet
+   EOF
+
+   # Rendez le script exécutable
+   chmod +x backup.sh
+
+   # Ajoutez une tâche cron pour la sauvegarde quotidienne
+   (crontab -l 2>/dev/null; echo "0 0 * * * /home/azureuser/backup.sh") | crontab -
+   ```
+
+2. Sécurisez l'accès SSH :
+   ```bash
+   # Éditez la configuration SSH
+   sudo nano /etc/ssh/sshd_config
+
+   # Ajoutez ou modifiez ces lignes
+   PermitRootLogin no
+   PasswordAuthentication no
+   ```
+
+3. Redémarrez SSH :
+   ```bash
+   sudo systemctl restart sshd
+   ```
+
+10. DÉPANNAGE COURANT
+--------------------
+1. Si l'application ne démarre pas :
+   ```bash
+   # Vérifiez les logs
+   docker compose logs
+
+   # Vérifiez l'espace disque
+   df -h
+
+   # Vérifiez la mémoire
+   free -h
+   ```
+
+2. Si vous ne pouvez pas vous connecter :
+   ```bash
+   # Vérifiez que le service SSH est en cours d'exécution
+   sudo systemctl status sshd
+
+   # Vérifiez les logs SSH
+   sudo tail -f /var/log/auth.log
+   ```
+
+3. Si les ports ne sont pas accessibles :
+   ```bash
+   # Vérifiez les règles du pare-feu
+   sudo ufw status
+
+   # Vérifiez les ports en écoute
+   sudo netstat -tulpn
+   ```
+
+11. COÛTS ET OPTIMISATION
+------------------------
+1. Surveillez les coûts :
+   - Allez dans le portail Azure
+   - Cliquez sur "Coût + facturation"
+   - Configurez des alertes de budget
+
+2. Optimisez les ressources :
+   - Arrêtez la machine virtuelle quand vous ne l'utilisez pas
+   - Utilisez des tailles de machine appropriées
+   - Nettoyez régulièrement les images Docker non utilisées
+
+3. Commandes utiles pour l'optimisation :
+   ```bash
+   # Nettoyage des images Docker
+   docker system prune -a
+
+   # Vérification de l'utilisation des ressources
+   htop
+
+   # Surveillance des logs
+   journalctl -f
+   ```
+
+[Le reste du guide reste identique...] 
