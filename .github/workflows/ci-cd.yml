@@ -7,32 +7,29 @@ on:
 jobs:
   build-and-push:
     runs-on: self-hosted
+    # Déclarer une sortie « tag » pour être réutilisée ensuite
+    outputs:
+      tag: ${{ steps.vars.outputs.TAG }}
 
     steps:
-      # 1) Récupérer le code du dépôt
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      # 2) Vérifier la présence de Docker
       - name: Debug – afficher le PATH
         run: |
           echo "PATH = $PATH"
           which docker || echo "docker non trouvé dans le PATH"
 
-      # 3) Se connecter à Docker Hub
       - name: Connexion à Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DH_USERNAME }}
           password: ${{ secrets.DH_TOKEN }}
 
-      # 4) Générer le TAG à partir du SHA de commit
       - name: Définir le tag d’image
         id: vars
-        run: |
-          echo "TAG=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+        run: echo "TAG=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
 
-      # 5) Construire et pousser l’image Backend
       - name: Build & Push image backend
         uses: docker/build-push-action@v5
         with:
@@ -41,7 +38,6 @@ jobs:
           push: true
           tags: ${{ secrets.DH_USERNAME }}/tp-final-a57-backend:${{ steps.vars.outputs.TAG }}
 
-      # 6) Construire et pousser l’image Frontend
       - name: Build & Push image frontend
         uses: docker/build-push-action@v5
         with:
@@ -55,24 +51,27 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # 7) Refaire le checkout pour récupérer le docker-compose.yml
+      # On doit de nouveau faire un checkout pour récupérer docker-compose.yml
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      # 8) Déployer avec Docker Compose
       - name: Déploiement local avec docker compose
         run: |
-          # Se placer dans le répertoire racine du dépôt cloné
+          # Se placer dans le répertoire où GitHub Actions a cloné le dépôt
           cd "${{ github.workspace }}"
 
-          # Variables pour le docker-compose.yml
+          # Récupérer les variables depuis la sortie du job build-and-push
           export DH_USERNAME=${{ secrets.DH_USERNAME }}
-          export TAG=${{ steps.vars.outputs.TAG }}
+          export TAG=${{ needs.build-and-push.outputs.tag }}
 
-          # Pull des images depuis Docker Hub
+          # Afficher le tag pour debug
+          echo "DH_USERNAME = $DH_USERNAME"
+          echo "TAG          = $TAG"
+
+          # Télécharger les images correspondant au tag
           docker compose pull
 
-          # Relancer les services en arrière-plan
+          # Relancer les services en arrière-plan avec ce tag
           docker compose up -d
 
   notify:
@@ -80,7 +79,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 9) Envoyer une notification par e-mail
       - name: Send email notification
         uses: dawidd6/action-send-mail@v3
         with:
