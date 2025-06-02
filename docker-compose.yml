@@ -32,18 +32,18 @@ services:
   mlflow-ui:
     image: python:3.9
     ports:
-      - "5001:5000"
+      - "5000:5000"
     environment:
       - MLFLOW_BACKEND_STORE_URI=file:/app/backend/mlruns
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
-      - ./backendml/runs:/app/backend/mlruns
+      - ./backend:/app/backend
     working_dir: /app
     command: >
       sh -c "pip install --no-cache-dir mlflow &&
              mlflow ui --backend-store-uri file:/app/backend/mlruns \
-                       --default-artifact-root /app/backend/mlruns \
-                       --host 0.0.0.0 --port 5000"
+             --default-artifact-root /app/backend/mlruns \
+             --host 0.0.0.0 --port 5000"
     networks:
       - project_network
 
