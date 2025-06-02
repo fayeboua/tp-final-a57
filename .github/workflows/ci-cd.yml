@@ -30,6 +30,15 @@ jobs:
         id: vars
         run: echo "TAG=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
 
+      - name: Build & Push image mlflow
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.mlflow
+          push: true
+          tags: ${{ secrets.DH_USERNAME }}/tp-final-a57-mlflow:${{ steps.vars.outputs.TAG }}
+
+
       - name: Build & Push image backend
         uses: docker/build-push-action@v5
         with:
