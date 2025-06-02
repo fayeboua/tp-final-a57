@@ -32,7 +32,7 @@ services:
   mlflow-ui:
     image: python:3.9
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - MLFLOW_BACKEND_STORE_URI=file:/app/backend/mlruns
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
