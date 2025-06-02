@@ -1,0 +1,15 @@
+artifact_uri: /app/backend/mlruns/103585590989243230/6f740e2abf2a452fb5ab846aecf62eab/artifacts
+end_time: 1748892685633
+entry_point_name: ''
+experiment_id: '103585590989243230'
+lifecycle_stage: active
+run_id: 6f740e2abf2a452fb5ab846aecf62eab
+run_name: sedate-mule-383
+run_uuid: 6f740e2abf2a452fb5ab846aecf62eab
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1748892641819
+status: 3
+tags: []
+user_id: appuser

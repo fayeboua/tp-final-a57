@@ -1,0 +1,20 @@
+FROM python:3.9-slim
+
+# 1) Installer MLflow et psycopg2 pour PostgreSQL
+RUN apt-get update && \
+    apt-get install -y gcc libpq-dev python3-dev && \
+    pip install --no-cache-dir mlflow psycopg2-binary
+
+# 2) Créer le répertoire mlruns pour que MLflow puisse y écrire
+RUN mkdir -p /app/backend/mlruns && chown -R root:root /app/backend/mlruns
+
+WORKDIR /app
+
+EXPOSE 5001
+
+# 3) Définir l'entrée du conteneur : démarrer "mlflow server" sur 0.0.0.0:5001
+ENTRYPOINT ["mlflow", "server", \
+             "--backend-store-uri", "postgresql://mlflow:mlflow@postgres:5432/mlflow", \
+             "--default-artifact-root", "/app/backend/mlruns", \
+             "--host", "0.0.0.0", \
+             "--port", "5001"]

@@ -91,17 +91,11 @@ async def predict(file: bytes = File(...)):
 async def train_api(
     experiment_name: str = Form(...),
     target: str = Form(...),
-    models: int = Form(...),
-    file: UploadFile = File(...)
+    models: int = Form(...)
 ):
     try:
-        contents = await file.read()
-        file_path = f"/tmp/{file.filename}"
-
-        with open(file_path, "wb") as f:
-            f.write(contents)
-
-        train_model(experiment_name, target, models, file_path)
+       
+        train_model(experiment_name, target, models)
 
         return JSONResponse(content={"message": "Training completed successfully."})
     except Exception as e:

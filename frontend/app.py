@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import io
 import json
+import os
 
 st.set_page_config(page_title="AutoML Project", layout="wide")
 
@@ -15,7 +16,7 @@ menu = st.sidebar.selectbox(
 st.title('End-to-End AutoML Project: Insurance Cross-Sell')
 
 if menu == "Prediction":
-    endpoint = 'http://192.168.2.83:8000/predict'
+    endpoint = f"http://{os.environ.get('BACKEND_HOST', 'localhost:8000')}/predict"
     test_csv = st.file_uploader('', type=['csv'], accept_multiple_files=False)
 
     if test_csv:
@@ -50,40 +51,33 @@ elif menu == "Training":
     target = st.text_input("Target Column", "")
     models = st.number_input("Number of Models (max_models)", min_value=1, max_value=50, value=10)
 
-    train_csv = st.file_uploader('Upload Training CSV', type=['csv'], key='train')
-    if train_csv:
-        train_df = pd.read_csv(train_csv)
-        st.subheader('Sample of Training Dataset')
-        st.write(train_df.head())
-        if st.button('Start Training'):
-            if not experiment_name:
-                st.warning("Please enter an experiment name.")
-            elif not target:
-                st.warning("Please enter the target column.")
-            elif train_df.empty:
-                st.warning("Please upload a valid training dataset.")
-            else:
-                with st.spinner(f"Training started for experiment '{experiment_name}' with {models} models."):
-                    train_bytes_obj = io.BytesIO()
-                    train_df.to_csv(train_bytes_obj, index=False)
-                    train_bytes_obj.seek(0)
-                    files = {"file": ('train_dataset.csv', train_bytes_obj, "multipart/form-data")}
-                    data = {
-                        "experiment_name": experiment_name,
-                        "target": target,
-                        "models": int(models)
-                    }
-                    try:
-                        response = requests.post(
-                            'http://192.168.2.83:8000/train',
-                            files=files,
-                            data=data,
-                            timeout=8000
-                        )
-                        if response.status_code == 200:
-                            st.success("Training completed successfully!")
-                            st.json(response.json())
-                        else:
-                            st.error(f"Training failed: {response.text}")
-                    except Exception as e:
-                        st.error(f"Error during training: {e}")
+    
+    st.subheader('Sample of Training Dataset')
+    if st.button('Start Training'):
+        if not experiment_name:
+            st.warning("Please enter an experiment name.")
+        elif not target:
+            st.warning("Please enter the target column.")
+
+        else:
+            with st.spinner(f"Training started for experiment '{experiment_name}' with {models} models."):
+                
+                data = {
+                    "experiment_name": experiment_name,
+                    "target": target,
+                    "models": int(models)
+                }
+                try:
+                    
+                    response = requests.post(
+                        f"{os.environ.get('BACKEND_HOST', 'http://backend:8000')}/train",
+                        data=data,
+                        timeout=8000
+                    )
+                    if response.status_code == 200:
+                        st.success("Training completed successfully!")
+                        st.json(response.json())
+                    else:
+                        st.error(f"Training failed: {response.text}")
+                except Exception as e:
+                    st.error(f"Error during training: {e}")
