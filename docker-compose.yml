@@ -37,7 +37,7 @@ services:
       - MLFLOW_BACKEND_STORE_URI=file:/app/backend/mlruns
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
-      - ./backend:/app/backend
+      - ./backendml/runs:/app/backend/mlruns
     working_dir: /app
     command: >
       sh -c "pip install --no-cache-dir mlflow &&
