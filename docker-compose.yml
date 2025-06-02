@@ -1,7 +1,7 @@
 services:
   backend:
     build: backend
-    image: e2e-automl-backend:latest     
+    image: "${DH_USERNAME}/tp-final-a57-backend:${TAG}"   
     ports:
       - "8000:8000"
       - "54321:54321"
@@ -18,7 +18,7 @@ services:
 
   frontend:
     build: frontend
-    image: e2e-automl-frontend:latest
+    image: "${DH_USERNAME}/tp-final-a57-frontend:${TAG}"
     ports:
       - "8501:8501"
     volumes:
@@ -35,7 +35,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.mlflow
-    image: e2e-automl-mlflow:latest
+    image: "${DH_USERNAME}/tp-final-a57-mlflow:${TAG}"
     ports:
       - "5001:5001"
     environment:
