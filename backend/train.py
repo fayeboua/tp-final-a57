@@ -17,7 +17,13 @@ def train(experiment_name, target, models, file_path):
     # ========== Setup Tracking & Paths ==========
     mlruns_path = "/app/backend/mlruns"
     os.makedirs(mlruns_path, exist_ok=True)
-
+    mlflow.set_tracking_uri(f"file:{mlruns_path}")
+    mlflow.server._run_server([
+        "--backend-store-uri", "file:/app/backend/mlruns",
+        "--default-artifact-root", "/app/backend/mlruns",
+        "--host", "0.0.0.0",
+        "--port", "5000"
+    ])
 
     # ========== Init H2O ==========
     h2o.init()
