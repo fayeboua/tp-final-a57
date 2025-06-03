@@ -1,52 +1,78 @@
-version: "3.8"
-
 services:
   backend:
     build: backend
-    image: "${DH_USERNAME}/tp-final-a57-backend:${TAG}"
+    image: e2e-automl-backend:latest  
     ports:
       - "8000:8000"
       - "54321:54321"
     environment:
-      - MLFLOW_TRACKING_URI=file:/app/backend/mlruns
-      - MLFLOW_BACKEND_STORE_URI=/app/backend/mlruns
+      - MLFLOW_TRACKING_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
+      - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
-      # On persiste uniquement le dossier mlruns (artefacts MLflow)
       - ./backend:/app/backend
+    depends_on:
+      - mlflow
     networks:
       - project_network
 
   frontend:
     build: frontend
-    image: "${DH_USERNAME}/tp-final-a57-frontend:${TAG}"
+    image: e2e-automl-frontend:latest
     ports:
       - "8501:8501"
     volumes:
       - ./frontend:/app/frontend
-    depends_on:
+    environment:
+      - BACKEND_HOST=http://backend:8000
+      - MLFLOW_TRACKING_URI=http://mlflow:5001
+    depends_on: 
       - backend
     networks:
       - project_network
 
   mlflow:
-    image: python:3.9
+    build:
+      context: .
+      dockerfile: Dockerfile.mlflow
+    image: e2e-automl-mlflow:latest
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
-      - MLFLOW_BACKEND_STORE_URI=file:/app/backend/mlruns
+      - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
+      - BACKEND_HOST=http://backend:8000
     volumes:
-      - ./backend:/app/backend
-    working_dir: /app
-    command: >
-      sh -c "pip install --no-cache-dir mlflow &&
-             mlflow ui --backend-store-uri file:/app/backend/mlruns \
-                       --default-artifact-root /app/backend/mlruns \
-                       --host 0.0.0.0 --port 5000"
+      - ./backend/mlruns:/app/backend/mlruns
+    depends_on:
+      - postgres
     networks:
       - project_network
 
+  postgres:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=mlflow
+      - POSTGRES_USER=mlflow
+      - POSTGRES_PASSWORD=mlflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - project_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes: [pgadmin_data:/var/lib/pgadmin]
+  
   portainer:
     image: portainer/portainer-ce:latest
     ports:
@@ -60,7 +86,10 @@ services:
       - project_network
 
 volumes:
+  postgres_data:
   portainer_data:
+  pgadmin_data:
 
 networks:
   project_network:
+    driver: bridge
