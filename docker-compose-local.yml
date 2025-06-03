@@ -72,6 +72,8 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     volumes: [pgadmin_data:/var/lib/pgadmin]
+    networks:
+      - project_network
   
   portainer:
     image: portainer/portainer-ce:latest
