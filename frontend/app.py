@@ -16,7 +16,7 @@ menu = st.sidebar.selectbox(
 st.title('End-to-End AutoML Project: Insurance Cross-Sell')
 
 if menu == "Prediction":
-    endpoint = f"http://{os.environ.get('BACKEND_HOST', 'localhost:8000')}/predict"
+    endpoint = f"{os.environ.get('BACKEND_HOST', 'http://localhost:8000')}/predict"
     test_csv = st.file_uploader('', type=['csv'], accept_multiple_files=False)
 
     if test_csv:
