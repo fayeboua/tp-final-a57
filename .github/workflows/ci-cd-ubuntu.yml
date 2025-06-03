@@ -1,0 +1,103 @@
+name: CI-CD Docker
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+    # Déclarer une sortie « tag » pour être réutilisée ensuite
+    outputs:
+      tag: ${{ steps.vars.outputs.TAG }}
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Debug – afficher le PATH
+        run: |
+          echo "PATH = $PATH"
+          which docker || echo "docker non trouvé dans le PATH"
+
+      - name: Connexion à Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DH_USERNAME }}
+          password: ${{ secrets.DH_TOKEN }}
+
+      - name: Définir le tag d’image
+        id: vars
+        run: echo "TAG=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      - name: Build & Push image mlflow
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.mlflow
+          push: true
+          tags: ${{ secrets.DH_USERNAME }}/tp-final-a57-mlflow:${{ steps.vars.outputs.TAG }}
+
+
+      - name: Build & Push image backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ secrets.DH_USERNAME }}/tp-final-a57-backend:${{ steps.vars.outputs.TAG }}
+
+      - name: Build & Push image frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ secrets.DH_USERNAME }}/tp-final-a57-frontend:${{ steps.vars.outputs.TAG }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+
+    steps:
+      # On doit de nouveau faire un checkout pour récupérer docker-compose.yml
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Déploiement local avec docker compose
+        run: |
+          # Se placer dans le répertoire où GitHub Actions a cloné le dépôt
+          cd "${{ github.workspace }}"
+
+          # Récupérer les variables depuis la sortie du job build-and-push
+          export DH_USERNAME=${{ secrets.DH_USERNAME }}
+          export TAG=${{ needs.build-and-push.outputs.tag }}
+
+          # Afficher le tag pour debug
+          echo "DH_USERNAME = $DH_USERNAME"
+          echo "TAG          = $TAG"
+
+          # Télécharger les images correspondant au tag
+          docker compose pull
+
+          # Relancer les services en arrière-plan avec ce tag
+          docker compose up -d
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.bdeb.qc.ca
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: ✅ CI/CD terminé avec succès
+          to: 2446546@bdeb.qc.ca
+          from: GitHub Actions <2446546@bdeb.qc.ca>
+          body: |
+            Le workflow CI/CD dans le dépôt tp-final-a57 s'est exécuté avec succès !
