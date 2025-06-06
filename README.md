@@ -1,22 +1,43 @@
-1. Configuration de la VM Azure
-    1.1.  creation de la VN sur azure
-    ![alt text](screenshoots/VM.png)
+# Projet Final A57
 
-    1.2. Ajout des ports
-    ![alt text](screenshoots/Ports.png)
+## Intro
 
-2. Config Repo Git
-   2.1 Code source
-   ![alt text](<screenshoots/Screenshot 2025-06-06 at 6.50.26 PM.png>)
+## Configuration de la VM Azure
 
-   2.2 Ajout des secrets dans GitHub
-   ![alt text](<screenshoots/Screenshot 2025-06-06 at 6.51.30 PM.png>)
+### Creation de la VN sur azure
 
-   2.2 Ajout des Runner pour le Self-Hosted
-   ![alt text](<screenshoots/Screenshot 2025-06-06 at 6.52.35 PM.png>)
+![alt text](screenshoots/VM.png)
 
-3. Mlflow
-   ![alt text](<screenshoots/Screenshot 2025-06-06 at 6.56.16 PM.png>)
+### Ajout des ports
 
-4. Streamlit
-   ![alt text](<screenshoots/Screenshot 2025-06-06 at 6.57.08 PM.png>)
+![alt text](screenshoots/Ports.png)
+
+## Config Repo Git
+
+### Code source
+
+![alt text](<screenshoots/Git src.png>)
+
+### Ajout des secrets dans GitHub
+
+![alt text](<screenshoots/Git Secret.png>)
+
+### Ajout des Runner pour le Self-Hosted
+
+![alt text](<screenshoots/Runners.png>)
+
+## Mlflow
+
+![alt text](screenshoots/Mlflow.png)
+
+## Streamlit
+
+![alt text](screenshoots/Streamlit.png)
+
+## FastApi
+
+![alt text](screenshoots/FastApi.png)
+
+## Postgres
+
+![alt text](screenshoots/Postgres.png)
