@@ -83,21 +83,21 @@ jobs:
           # Relancer les services en arrière-plan avec ce tag
           docker compose up -d
 
-  notify:
-    needs: deploy
-    runs-on: ubuntu-latest
+  # notify:
+  #   needs: deploy
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.bdeb.qc.ca
-          server_port: 465
-          secure: true
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: ✅ CI/CD terminé avec succès
-          to: 2446546@bdeb.qc.ca
-          from: GitHub Actions <2446546@bdeb.qc.ca>
-          body: |
-            Le workflow CI/CD dans le dépôt tp-final-a57 s'est exécuté avec succès !
+  #   steps:
+  #     - name: Send email notification
+  #       uses: dawidd6/action-send-mail@v3
+  #       with:
+  #         server_address: smtp.bdeb.qc.ca
+  #         server_port: 465
+  #         secure: true
+  #         username: ${{ secrets.EMAIL_USERNAME }}
+  #         password: ${{ secrets.EMAIL_PASSWORD }}
+  #         subject: ✅ CI/CD terminé avec succès
+  #         to: 2446546@bdeb.qc.ca
+  #         from: GitHub Actions <2446546@bdeb.qc.ca>
+  #         body: |
+  #           Le workflow CI/CD dans le dépôt tp-final-a57 s'est exécuté avec succès !

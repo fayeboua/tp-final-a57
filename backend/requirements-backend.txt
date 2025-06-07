@@ -10,3 +10,5 @@ tabulate
 future
 opendatasets
 protobuf
+openai
+psutil

@@ -7,8 +7,23 @@ import mlflow.h2o
 from mlflow.tracking import MlflowClient
 import json
 import pandas as pd
+from mlflow.models.signature import infer_signature
+import mlflow.openai
+from openai import OpenAI
+import platform
+import psutil
+
+mlflow.openai.autolog()
+
+client = OpenAI(api_key="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")
 
 mlflow.set_tracking_uri("http://mlflow:5001")
+
+def log_system_info():
+    mlflow.log_param("platform", platform.platform())
+    mlflow.log_param("processor", platform.processor())
+    mlflow.log_param("cpu_count", psutil.cpu_count())
+    mlflow.log_param("memory_total_GB", round(psutil.virtual_memory().total / (1024 ** 3), 2))
 
 def train(experiment_name: str, target: str, models: int):
     h2o.init()
@@ -25,18 +40,31 @@ def train(experiment_name: str, target: str, models: int):
     predictors = [col for col in main_frame.col_names if col != target]
     main_frame[target] = main_frame[target].asfactor()
 
-    client = MlflowClient()
+    mlflow_client = MlflowClient()
+
     try:
-        experiment_id = mlflow.create_experiment(experiment_name)
+        experiment_id = mlflow.create_experiment(
+            experiment_name,
+            artifact_location="file:///app/backend/mlruns"
+        )
     except Exception:
-        experiment = client.get_experiment_by_name(experiment_name)
+        experiment = mlflow_client.get_experiment_by_name(experiment_name)
+        if experiment is None:
+            raise RuntimeError(f"Impossible de trouver ou créer l'expérience '{experiment_name}'")
         experiment_id = experiment.experiment_id
+
     mlflow.set_experiment(experiment_name)
 
     print("→ Lancement du run MLflow pour l’expérience:", experiment_name)
     with mlflow.start_run() as run:
         run_id = run.info.run_id
         print("→ Run ID :", run_id)
+
+        mlflow.set_tag("source", "h2o-automl-train")
+        log_system_info()
+
+        mlflow.log_param("max_models", models)
+        mlflow.log_param("target", target)
 
         mlflow.log_artifact(chemin_train, artifact_path="input_data")
         mlflow.log_artifact(chemin_col_types, artifact_path="input_data")
@@ -54,29 +82,82 @@ def train(experiment_name: str, target: str, models: int):
         leader = aml.leader
         perf = leader.model_performance()
 
-        # Enregistrement des métriques avec vérification de type
-        mlflow.log_metric("logloss", float(perf.logloss()))
-        mlflow.log_metric("AUC", float(perf.auc()))
-        mlflow.log_metric("mean_per_class_error", float(perf.mean_per_class_error()))
-        mlflow.log_metric("rmse", float(perf.rmse()))
-        mlflow.log_metric("mse", float(perf.mse()))
+        metrics = {
+            "logloss": float(perf.logloss()),
+            "AUC": float(perf.auc()),
+            "rmse": float(perf.rmse()),
+            "mse": float(perf.mse())
+        }
 
-        # Accuracy nécessite extraction depuis la liste retournée
         accuracy_list = perf.accuracy()
         if isinstance(accuracy_list, list) and len(accuracy_list) > 0:
-            mlflow.log_metric("accuracy", float(accuracy_list[0][1]))
+            metrics["accuracy"] = float(accuracy_list[0][1])
 
-        mlflow.h2o.log_model(leader, artifact_path="model")
+        for k, v in metrics.items():
+            mlflow.log_metric(k, v)
+
+        temp_dir = "mlruns/tmp/mlflow_metrics"
+        os.makedirs(temp_dir, exist_ok=True)
+        metrics_path = os.path.join(temp_dir, f"metrics_{run_id}.json")
+        with open(metrics_path, "w") as f:
+            json.dump(metrics, f, indent=2)
+        mlflow.log_artifact(metrics_path, artifact_path="metrics")
+
+        pd_predictors = main_frame[predictors].as_data_frame()
+        pd_preds = leader.predict(main_frame[predictors]).as_data_frame()
+        signature = infer_signature(pd_predictors, pd_preds)
+
+        mlflow.h2o.log_model(leader, artifact_path="model", signature=signature)
 
         lb = get_leaderboard(aml, extra_columns='ALL')
         df_leaderboard = lb.as_data_frame()
-        temp_dir = "/tmp/mlflow_leaderboard"
-        os.makedirs(temp_dir, exist_ok=True)
-        leaderboard_csv = os.path.join(temp_dir, f"leaderboard_{run_id}.csv")
+        temp_dir_lb = "mlruns/tmp/mlflow_leaderboard"
+        os.makedirs(temp_dir_lb, exist_ok=True)
+        leaderboard_csv = os.path.join(temp_dir_lb, f"leaderboard_{run_id}.csv")
         df_leaderboard.to_csv(leaderboard_csv, index=False)
         mlflow.log_artifact(leaderboard_csv, artifact_path="leaderboard")
 
-        print(f"[✓] Modèle et leaderboard loggés dans MLflow (run_id={run_id})")
+        print(f"[✓] Modèle, métriques et leaderboard loggés dans MLflow (run_id={run_id})")
+
+        try:
+            prompt = f"""Voici les résultats d’un entraînement AutoML avec H2O :
+                - Modèle leader : {leader.algo}
+                - Métriques : {json.dumps(metrics, indent=2)}
+                - Top 3 du leaderboard :\n{df_leaderboard.head(3).to_string(index=False)}
+
+                Peux-tu résumer les performances du modèle et proposer des pistes d’amélioration ou d’analyse ?"""
+
+            mlflow.set_tag("openai_summary", "in_progress")
+
+            def generate_summary(model_name):
+                return client.chat.completions.create(
+                    model=model_name,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.5,
+                    max_tokens=500
+                )
+
+            try:
+                completion = generate_summary("gpt-4o")
+            except Exception:
+                print("→ GPT-4o indisponible, tentative avec gpt-3.5-turbo…")
+                completion = generate_summary("gpt-3.5-turbo")
+
+            summary_text = completion.choices[0].message.content.strip()
+            print("Résumé généré par OpenAI :\n", summary_text)
+
+            summary_dir = "mlruns/tmp/mlflow_openai"
+            os.makedirs(summary_dir, exist_ok=True)
+            summary_path = os.path.join(summary_dir, f"openai_summary_{run_id}.txt")
+            with open(summary_path, "w") as f:
+                f.write(summary_text)
+
+            mlflow.log_artifact(summary_path, artifact_path="openai_summary")
+            mlflow.set_tag("openai_summary", "done")
+
+        except Exception as e:
+            print("Erreur OpenAI :", e)
+            mlflow.set_tag("openai_summary", "failed")
 
 def parse_args():
     parser = argparse.ArgumentParser(description="H2O AutoML avec MLflow")
