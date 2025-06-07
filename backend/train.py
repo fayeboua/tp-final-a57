@@ -15,7 +15,7 @@ import psutil
 
 mlflow.openai.autolog()
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=os.environ.get("OPEN_AI_KEY", ""))
 
 mlflow.set_tracking_uri("http://mlflow:5001")
 

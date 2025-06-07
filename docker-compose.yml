@@ -1,18 +1,16 @@
 services:
   backend:
     build: backend
-    image: e2e-automl-backend:latest  
+    image: "${DH_USERNAME}/tp-final-a57-backend:${TAG}"   
     ports:
       - "8000:8000"
       - "54321:54321"
     environment:
-      - MLFLOW_TRACKING_URI=http://mlflow:5001
+      - MLFLOW_TRACKING_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
       - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
     volumes:
       - ./backend:/app/backend
-      - mlruns_data:/app/backend/mlruns
-
     depends_on:
       - mlflow
     networks:
@@ -20,7 +18,7 @@ services:
 
   frontend:
     build: frontend
-    image: e2e-automl-frontend:latest
+    image: "${DH_USERNAME}/tp-final-a57-frontend:${TAG}"
     ports:
       - "8501:8501"
     volumes:
@@ -37,7 +35,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.mlflow
-    image: e2e-automl-mlflow:latest
+    image: "${DH_USERNAME}/tp-final-a57-mlflow:${TAG}"
     ports:
       - "5001:5001"
     environment:
@@ -45,7 +43,7 @@ services:
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
       - BACKEND_HOST=http://backend:8000
     volumes:
-      - mlruns_data:/app/backend/mlruns
+      - ./backend/mlruns:/app/backend/mlruns
     depends_on:
       - postgres
     networks:
@@ -75,7 +73,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     volumes: [pgadmin_data:/var/lib/pgadmin]
     networks:
-      - project_network
+        - project_network
   
   portainer:
     image: portainer/portainer-ce:latest
@@ -93,8 +91,6 @@ volumes:
   postgres_data:
   portainer_data:
   pgadmin_data:
-  mlruns_data:
-
 
 networks:
   project_network:
