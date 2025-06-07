@@ -43,50 +43,40 @@ tp-final-a57/
 
 ## Comment démarrer le projet
 
-1. **Les prérequis :**
+### Les prérequis
 
-    Avant de démarrer le projet, assurez-vous de disposer des éléments suivants :
+Avant de démarrer le projet, assurez-vous de disposer des éléments suivants :
 
-    - **Git installé**  
-      Téléchargez et installez Git depuis [git-scm.com](https://git-scm.com/).
+- **Git installé**  
+    Téléchargez et installez Git depuis [git-scm.com](https://git-scm.com/).
 
-    - **Compte Azure**  
-      Créez un compte Azure ([azure.microsoft.com](https://azure.microsoft.com/)) et provisionnez une VM pour héberger les services du projet.
+- **Compte Azure**  
+    Créez un compte Azure ([azure.microsoft.com](https://azure.microsoft.com/)) et provisionnez une VM pour héberger les services du projet.
 
-    - **Clé API OpenAI**  
-      Inscrivez-vous sur [platform.openai.com](https://platform.openai.com/) pour obtenir une clé API permettant d’utiliser les services d’IA générative.
+- **Clé API OpenAI**  
+    Inscrivez-vous sur [platform.openai.com](https://platform.openai.com/) pour obtenir une clé API permettant d’utiliser les services d’IA générative.
 
-    - **Compte Docker Hub**  
-      Créez un compte sur [hub.docker.com](https://hub.docker.com/) pour stocker et récupérer les images Docker nécessaires au déploiement.
+- **Compte Docker Hub**  
+    Créez un compte sur [hub.docker.com](https://hub.docker.com/) pour stocker et récupérer les images Docker nécessaires au déploiement.
 
-    - **Docker et Docker Compose installés**  
-      Installez Docker et Docker Compose sur votre machine ou sur la VM cible ([docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)).
+- **Docker et Docker Compose installés**  
+    Installez Docker et Docker Compose sur votre machine ou sur la VM cible ([docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)).
 
-    - **Accès SSH à la VM**  
-      Générez une paire de clés SSH pour accéder à la VM Azure de façon sécurisée.
+- **Accès SSH à la VM**  
+    Générez une paire de clés SSH pour accéder à la VM Azure de façon sécurisée.
 
-2. **Cloner le dépôt :**
+### Cloner le dépôt
 
-    ```bash
+``` bash
     git clone https://github.com/fayeboua/tp-final-a57.git
     cd tp-final-a57
-    ```
+```
 
-3. **Configurer les variables d’environnement et secrets GitHub :**
+### Creation de la VM Azure
 
-Ajout des secrets (clés API, identifiants, etc.) dans la section "Secrets" de GitHub pour sécuriser les workflows CI/CD.
+Déploiement d’une VM dédiée et configuration d’un réseau virtuel pour isoler et sécuriser l’environnement.
 
-| Nom du secret   | Description                                 |
-|-----------------|---------------------------------------------|
-| AZURE_HOST      | Adresse de la machine virtuelle Azure        |
-| DH_TOKEN        | Jeton d’accès Docker Hub                     |
-| DH_USERNAME     | Nom d’utilisateur Docker Hub                 |
-| SSH_KEY         | Clé SSH privée pour l’accès à la VM          |
-| OPEN_AI_KEY     | Clé API pour accéder aux services OpenAI     |
-
-![Secrets GitHub](screenshoots/Git%20Secret.png)
-
-4. **Déployer l’infrastructure sur Azure :**
+![Création de la VM](screenshoots/VM.png)
 
 ### Tableau des ports utilisés
 
@@ -102,6 +92,20 @@ Ajout des secrets (clés API, identifiants, etc.) dans la section "Secrets" de G
 
 ![Configuration des ports](screenshoots/Ports.png)
 
+### Configurer les variables d’environnement et secrets GitHub
+
+Ajout des secrets (clés API, identifiants, etc.) dans la section "Secrets" de GitHub pour sécuriser les workflows CI/CD.
+
+| Nom du secret   | Description                                 |
+|-----------------|---------------------------------------------|
+| AZURE_HOST      | Adresse de la machine virtuelle Azure        |
+| DH_TOKEN        | Jeton d’accès Docker Hub                     |
+| DH_USERNAME     | Nom d’utilisateur Docker Hub                 |
+| SSH_KEY         | Clé SSH privée pour l’accès à la VM          |
+| OPEN_AI_KEY     | Clé API pour accéder aux services OpenAI     |
+
+![Secrets GitHub](screenshoots/Git%20Secret.png)
+
 ### Configuration des runners self-hosted
 
 Déploiement de runners GitHub auto-hébergés sur la VM Azure pour exécuter les pipelines d’intégration et de déploiement continus.
@@ -114,9 +118,20 @@ Déploiement de runners GitHub auto-hébergés sur la VM Azure pour exécuter le
     $ tar xzf ./actions-runner-linux-x64-2.325.0.tar.gz
 ```
 
+![Runners Azure](screenshoots/Runners-2.png)
+
+```bash
+    # Create the runner and start the configuration experience
+    $ ./config.sh --url https://github.com/fayeboua/tp-final-a57 --token <VOTRE_TOKEN_ICI>
+    # Last step, run it!
+    $ ./run.sh
+```
+
+![Runners Azure](screenshoots/Runners-3.png)
+
 ![Runners GitHub](screenshoots/Runners.png)
 
-![Runners Azure](screenshoots/Runners-2.png)
+### Deploiement automatique de l'application
 
 5. **Lancer les services :**
     - Construire et démarrer les conteneurs Docker :
@@ -126,16 +141,6 @@ Déploiement de runners GitHub auto-hébergés sur la VM Azure pour exécuter le
       ```
 
     - Accéder aux interfaces web (Streamlit, Mlflow, Portainer, etc.) via les ports configurés.
-
-## Détails de la configuration
-
-### Création de la VM et du réseau virtuel sur Azure
-
-Déploiement d’une VM dédiée et configuration d’un réseau virtuel pour isoler et sécuriser l’environnement.
-
-![Création de la VM](screenshoots/VM.png)
-
-## Gestion du code source et CI/CD
 
 ### Versionnement du code
 
