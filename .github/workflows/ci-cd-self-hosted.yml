@@ -13,8 +13,6 @@ jobs:
       tag: ${{ steps.vars.outputs.TAG }}
 
     steps:
-      - name: Nettoyage ciblé des artefacts MLflow
-        run: sudo rm -rf "${{ github.workspace }}/backend/mlruns"
 
       - name: Checkout du code
         uses: actions/checkout@v4
