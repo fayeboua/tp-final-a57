@@ -3,6 +3,7 @@ name: CI-CD Docker self-hosted
 on:
   push:
     branches: [ main ]
+  workflow_dispatch: 
 
 jobs:
   build-and-push:
