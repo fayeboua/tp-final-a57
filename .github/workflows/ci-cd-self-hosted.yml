@@ -13,9 +13,9 @@ jobs:
       tag: ${{ steps.vars.outputs.TAG }}
 
     steps:
-      - name: Nettoyage du répertoire de travail
-        run: sudo rm -rf "${{ github.workspace }}"
-        
+      - name: Nettoyage ciblé des artefacts MLflow
+        run: sudo rm -rf "${{ github.workspace }}/backend/mlruns"
+
       - name: Checkout du code
         uses: actions/checkout@v4
 
