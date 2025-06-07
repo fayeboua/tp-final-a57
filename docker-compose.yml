@@ -9,6 +9,7 @@ services:
       - MLFLOW_TRACKING_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
       - MLFLOW_BACKEND_STORE_URI=postgresql://mlflow:mlflow@postgres:5432/mlflow
       - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/backend/mlruns
+      - OPENAI_API_KEY=${OPEN_AI_KEY}
     volumes:
       - ./backend:/app/backend
     depends_on:
