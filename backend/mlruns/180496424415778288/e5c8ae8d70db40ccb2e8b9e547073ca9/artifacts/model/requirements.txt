@@ -1,5 +1,0 @@
-mlflow==2.22.1
-h2o==3.46.0.7
-matplotlib==3.10.3
-numpy==1.26.4
-pandas==2.2.3
